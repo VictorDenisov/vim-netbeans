@@ -1,0 +1,38 @@
+Name:           vim-netbeans
+Version:        0.0.1
+Description:    Implementation of vim-netbeans protocol
+Synopsis:       Implementation of vim-netbeans protocol
+Copyright:      2013 Victor Denisov
+License:        GPL-2
+License-file:   LICENSE
+Author:	        Victor Denisov <denisovenator@gmail.com>
+Maintainer:     Victor Denisov <denisovenator@gmail.com>
+Build-type:     Custom
+Homepage:       https://github.com/VictorDenisov/vim-netbeans
+Category:       Editor
+Cabal-version:  >=1.8
+
+Executable framework-tests
+        hs-source-dirs: src
+        main-is:        Test/ByFramework.hs
+        other-modules:  Vim.Netbeans
+        build-depends:  base >= 3 && <= 4.5.0.0
+                     ,  HUnit
+                     ,  test-framework
+                     ,  test-framework-hunit
+
+Library
+        hs-source-dirs:         src
+        exposed-modules:        Vim.Netbeans
+        build-depends:          base >= 3.0.3.1 && <= 4.5.0.0
+                              , containers >= 0.4.2.1
+                              , binary >= 0.5.1.0
+                              , bytestring >= 0.9.2.1
+                              , transformers >= 0.3.0.0
+                              , mtl >= 2.1.2
+                              , network >= 2.3.0.14
+
+Source-repository head
+        type:           git
+        location:       git://github.com/VictorDenisov/vim-netbeans.git
+
