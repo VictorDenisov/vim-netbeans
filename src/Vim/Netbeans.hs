@@ -41,3 +41,6 @@ data Message = Auth String
 
 parseMessage :: String -> Message
 parseMessage m | "AUTH" `isPrefixOf` m = Auth $ (words m) !! 1
+
+printMessage :: Message -> String
+printMessage (Auth s) = "AUTH " ++ s ++ "\n"
