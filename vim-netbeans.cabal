@@ -20,6 +20,26 @@ Executable framework-tests
                      ,  HUnit
                      ,  test-framework
                      ,  test-framework-hunit
+                     ,  transformers >= 0.3.0.0
+                     ,  containers >= 0.4.2.1
+                     ,  binary >= 0.5.1.0
+                     ,  bytestring >= 0.9.2.1
+                     ,  transformers >= 0.3.0.0
+                     ,  mtl >= 2.1.2
+                     ,  network >= 2.3.0.14
+
+Executable Main
+        hs-source-dirs: src
+        main-is:        Test/Main.hs
+        other-modules:  Vim.Netbeans
+        build-depends:  base >= 3 && <= 4.5.0.0
+                     ,  transformers >= 0.3.0.0
+                     ,  containers >= 0.4.2.1
+                     ,  binary >= 0.5.1.0
+                     ,  bytestring >= 0.9.2.1
+                     ,  transformers >= 0.3.0.0
+                     ,  mtl >= 2.1.2
+                     ,  network >= 2.3.0.14
 
 Library
         hs-source-dirs:         src
