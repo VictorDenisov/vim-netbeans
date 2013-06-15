@@ -7,7 +7,7 @@ import Test.HUnit
 
 main = defaultMain tests
 
-tests = [ testGroup "test"
-            [ testCase "test" dumbTest
+tests = [ testGroup "parseMessage"
+            [ testCase "parseAuthMessage" parseAuthMessage
             ]
         ]

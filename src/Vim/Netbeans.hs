@@ -8,6 +8,7 @@ import Network (listenOn, accept, PortID)
 import System.IO (hGetLine)
 import Control.Monad.Error (ErrorT, runErrorT, MonadError(..), Error(..))
 import Control.Monad.IO.Class (MonadIO)
+import Data.List (isPrefixOf)
 
 type Netbeans = StateT ConnState
 
@@ -36,7 +37,7 @@ initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
 data Message = Auth String
-               deriving (Show)
+               deriving (Eq, Show)
 
 parseMessage :: String -> Message
-parseMessage = undefined
+parseMessage m | "AUTH" `isPrefixOf` m = Auth $ (words m) !! 1

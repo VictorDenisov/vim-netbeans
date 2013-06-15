@@ -5,5 +5,5 @@ import Test.HUnit
 
 import qualified Vim.Netbeans as N
 
-dumbTest :: Assertion
-dumbTest = 1 @=? 1
+parseAuthMessage :: Assertion
+parseAuthMessage = (N.Auth "password") @=? (N.parseMessage "AUTH password")
