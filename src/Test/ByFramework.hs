@@ -9,6 +9,7 @@ main = defaultMain tests
 
 tests = [ testGroup "parseMessage"
             [ testCase "parseAuthMessage" parseAuthMessage
+            , testCase "parseVersionMessage" parseVersionMessage
             ]
         , testGroup "printMessage"
             [ testCase "printAuthMessage" printAuthMessage
