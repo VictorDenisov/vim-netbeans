@@ -37,6 +37,8 @@ initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
 data Message = Auth String
+             | Disconnect
+             | Detach
                deriving (Eq, Show)
 
 parseMessage :: String -> Message
@@ -44,3 +46,5 @@ parseMessage m | "AUTH" `isPrefixOf` m = Auth $ (words m) !! 1
 
 printMessage :: Message -> String
 printMessage (Auth s) = "AUTH " ++ s ++ "\n"
+printMessage Disconnect = "DISCONNECT\n"
+printMessage Detach = "DETACH\n"

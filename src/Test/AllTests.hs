@@ -10,3 +10,9 @@ parseAuthMessage = (N.Auth "password") @=? (N.parseMessage "AUTH password")
 
 printAuthMessage :: Assertion
 printAuthMessage = ("AUTH password\n") @=? (N.printMessage (N.Auth "password"))
+
+printDisconnectMessage :: Assertion
+printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage N.Disconnect)
+
+printDetachMessage :: Assertion
+printDetachMessage = "DETACH\n" @=? (N.printMessage N.Detach)
