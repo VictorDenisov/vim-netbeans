@@ -49,6 +49,12 @@ data Message = Auth String
              | StartupDone
                 Int -- buf
                 Int -- seqNo
+             | E463
+             | E532
+             | E656
+             | E657
+             | E658
+             | E744
              | ErroneousMessage String
                deriving (Eq, Show)
 
@@ -56,7 +62,23 @@ parseNumber :: CharParser st Int
 parseNumber = read <$> many1 digit
 
 messageParser :: CharParser st Message
-messageParser = try authParser <|> try versionParser <|> startupDoneParser
+messageParser = try authParser
+            <|> try versionParser
+            <|> try startupDoneParser
+            <|> parseError
+
+parseError :: CharParser st Message
+parseError = do
+    char 'E'
+    s <- count 3 digit
+    case s of
+        "463" -> return E463 -- Region is guarded, cannot modify
+        "532" -> return E532 -- The defineAnnoType highlighting color name is too long
+        "656" -> return E656 -- Writes of unmodified buffers forbidden
+        "657" -> return E657 -- Partial writes disallowed
+        "658" -> return E658 -- Connection lost for this buffer
+        "744" -> return E744 -- Read-only file
+        _ -> return $ ErroneousMessage "unkown error code"
 
 authParser :: CharParser st Message
 authParser = do

@@ -11,6 +11,7 @@ tests = [ testGroup "parseMessage"
             [ testCase "parseAuthMessage" parseAuthMessage
             , testCase "parseVersionMessage" parseVersionMessage
             , testCase "parseStartupDoneMessage" parseStartupDoneMessage
+            , testCase "parseErrorMessage" parseErrorMessage
             ]
         , testGroup "printMessage"
             [ testCase "printAuthMessage" printAuthMessage

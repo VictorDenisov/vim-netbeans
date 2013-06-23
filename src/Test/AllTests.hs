@@ -14,6 +14,9 @@ parseVersionMessage = (N.Version 0 1 "2.5") @=? (N.parseMessage "0:version=1 \"2
 parseStartupDoneMessage :: Assertion
 parseStartupDoneMessage = (N.StartupDone 0 1) @=? (N.parseMessage "0:startupDone=1")
 
+parseErrorMessage :: Assertion
+parseErrorMessage = N.E463 @=? (N.parseMessage "E463")
+
 printAuthMessage :: Assertion
 printAuthMessage = ("AUTH password\n") @=? (N.printMessage (N.Auth "password"))
 
