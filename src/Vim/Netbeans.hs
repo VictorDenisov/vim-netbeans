@@ -45,6 +45,10 @@ data Message = Auth String
                 Int -- seqNo
              | Disconnect
              | Detach
+             | EditFile
+                Int -- buf
+                Int -- seqNo
+                String -- path
              | FileOpened
                 Int -- buf
                 Int -- seqNo
@@ -165,3 +169,6 @@ printMessage (Auth s) = "AUTH " ++ s ++ "\n"
 printMessage Disconnect = "DISCONNECT\n"
 printMessage Detach = "DETACH\n"
 printMessage (Create bufId seqNo) = (show bufId) ++ ":create!" ++ (show seqNo)
+printMessage (EditFile bufId seqNo path) =
+    (show bufId) ++ ":editFile!" ++ (show seqNo) ++
+    " \"" ++ path ++ "\""

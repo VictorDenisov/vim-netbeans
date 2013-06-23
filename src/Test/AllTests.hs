@@ -34,8 +34,14 @@ printAuthMessage = "AUTH password\n" @=? (N.printMessage (N.Auth "password"))
 printCreateMessage :: Assertion
 printCreateMessage = "0:create!1" @=? (N.printMessage $ N.Create 0 1)
 
+printEditFileMessage :: Assertion
+printEditFileMessage = "0:editFile!1 \"testfile.txt\""
+                       @=?
+                       (N.printMessage $ N.EditFile 0 1 "testfile.txt")
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage N.Disconnect)
 
 printDetachMessage :: Assertion
 printDetachMessage = "DETACH\n" @=? (N.printMessage N.Detach)
+
