@@ -46,6 +46,9 @@ data Message = Auth String
                 Int -- buf
                 Int -- seqNo
                 String
+             | StartupDone
+                Int -- buf
+                Int -- seqNo
              | ErroneousMessage String
                deriving (Eq, Show)
 
@@ -53,7 +56,7 @@ parseNumber :: CharParser st Int
 parseNumber = read <$> many1 digit
 
 messageParser :: CharParser st Message
-messageParser = try (authParser) <|> versionParser
+messageParser = try authParser <|> try versionParser <|> startupDoneParser
 
 authParser :: CharParser st Message
 authParser = do
@@ -70,6 +73,13 @@ versionParser = do
     ver <- many1 (oneOf "0123456789.")
     char '\"'
     return $ Version bufId seqN ver
+
+startupDoneParser :: CharParser st Message
+startupDoneParser = do
+    bufId <- parseNumber
+    string ":startupDone="
+    seqN <- parseNumber
+    return $ StartupDone bufId seqN
 
 parseMessage :: String -> Message
 parseMessage m = case parse messageParser "(unknown)" m of
