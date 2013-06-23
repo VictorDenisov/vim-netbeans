@@ -45,6 +45,12 @@ data Message = Auth String
                 Int -- seqNo
              | Disconnect
              | Detach
+             | FileOpened
+                Int -- buf
+                Int -- seqNo
+                String -- path
+                Bool -- open
+                Bool -- modified
              | Version
                 Int -- buf
                 Int -- seqNo
@@ -68,6 +74,7 @@ messageParser :: CharParser st Message
 messageParser = try authParser
             <|> try versionParser
             <|> try startupDoneParser
+            <|> try fileOpenedParser
             <|> parseError
 
 parseError :: CharParser st Message
@@ -105,6 +112,19 @@ startupDoneParser = do
     string ":startupDone="
     seqN <- parseNumber
     return $ StartupDone bufId seqN
+
+fileOpenedParser :: CharParser st Message
+fileOpenedParser = do
+    bufId <- parseNumber
+    string ":fileOpened="
+    seqN <- parseNumber
+    string " \""
+    path <- many1 $ noneOf "\""
+    string "\" "
+    open <- oneOf "TF"
+    char ' '
+    modified <- oneOf "TF"
+    return $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
 
 parseMessage :: String -> Message
 parseMessage m = case parse messageParser "(unknown)" m of

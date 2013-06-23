@@ -11,6 +11,9 @@ parseAuthMessage = (N.Auth "password") @=? (N.parseMessage "AUTH password")
 parseVersionMessage :: Assertion
 parseVersionMessage = (N.Version 0 1 "2.5") @=? (N.parseMessage "0:version=1 \"2.5\"")
 
+parseFileOpenedMessage :: Assertion
+parseFileOpenedMessage = (N.FileOpened 0 1 "pathname" True False) @=? (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
+
 parseStartupDoneMessage :: Assertion
 parseStartupDoneMessage = (N.StartupDone 0 1) @=? (N.parseMessage "0:startupDone=1")
 
