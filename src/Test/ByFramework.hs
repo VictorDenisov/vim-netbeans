@@ -22,5 +22,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printDetachMessage" printDetachMessage
             , testCase "printCreateMessage" printCreateMessage
             , testCase "printEditFileMessage" printEditFileMessage
+            , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             ]
         ]

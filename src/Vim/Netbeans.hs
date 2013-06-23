@@ -68,6 +68,9 @@ data Message = Auth String
                 Int -- buf
                 Int -- seqNo
                 String
+             | SetReadOnly
+                Int -- buf
+                Int -- seqNo
              | StartupDone
                 Int -- buf
                 Int -- seqNo
@@ -172,3 +175,5 @@ printMessage (Create bufId seqNo) = (show bufId) ++ ":create!" ++ (show seqNo)
 printMessage (EditFile bufId seqNo path) =
     (show bufId) ++ ":editFile!" ++ (show seqNo) ++
     " \"" ++ path ++ "\""
+printMessage (SetReadOnly bufId seqNo) =
+    (show bufId) ++ ":setReadOnly!" ++ (show seqNo)

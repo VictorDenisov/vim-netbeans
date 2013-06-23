@@ -45,3 +45,5 @@ printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage N.Disconnect)
 printDetachMessage :: Assertion
 printDetachMessage = "DETACH\n" @=? (N.printMessage N.Detach)
 
+printSetReadOnlyMessage :: Assertion
+printSetReadOnlyMessage = "0:setReadOnly!1" @=? (N.printMessage $ N.SetReadOnly 0 1)
