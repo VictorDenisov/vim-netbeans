@@ -17,5 +17,6 @@ tests = [ testGroup "parseMessage"
             [ testCase "printAuthMessage" printAuthMessage
             , testCase "printDisconnectMessage" printDisconnectMessage
             , testCase "printDetachMessage" printDetachMessage
+            , testCase "printCreateMessage" printCreateMessage
             ]
         ]

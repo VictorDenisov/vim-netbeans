@@ -18,7 +18,10 @@ parseErrorMessage :: Assertion
 parseErrorMessage = N.E463 @=? (N.parseMessage "E463")
 
 printAuthMessage :: Assertion
-printAuthMessage = ("AUTH password\n") @=? (N.printMessage (N.Auth "password"))
+printAuthMessage = "AUTH password\n" @=? (N.printMessage (N.Auth "password"))
+
+printCreateMessage :: Assertion
+printCreateMessage = "0:create!1" @=? (N.printMessage $ N.Create 0 1)
 
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage N.Disconnect)

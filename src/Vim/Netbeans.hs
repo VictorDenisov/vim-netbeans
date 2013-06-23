@@ -40,6 +40,9 @@ initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
 data Message = Auth String
+             | Create
+                Int -- buf
+                Int -- seqNo
              | Disconnect
              | Detach
              | Version
@@ -112,3 +115,4 @@ printMessage :: Message -> String
 printMessage (Auth s) = "AUTH " ++ s ++ "\n"
 printMessage Disconnect = "DISCONNECT\n"
 printMessage Detach = "DETACH\n"
+printMessage (Create bufId seqNo) = (show bufId) ++ ":create!" ++ (show seqNo)
