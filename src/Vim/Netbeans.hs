@@ -69,7 +69,6 @@ data Message = Auth String
              | E657
              | E658
              | E744
-             | ErroneousMessage String
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -94,7 +93,6 @@ parseError = do
         "657" -> return E657 -- Partial writes disallowed
         "658" -> return E658 -- Connection lost for this buffer
         "744" -> return E744 -- Read-only file
-        _ -> return $ ErroneousMessage "unkown error code"
 
 authParser :: CharParser st Message
 authParser = do
@@ -143,10 +141,10 @@ newDotAndMarkParser = do
     off2 <- parseNumber
     return $ NewDotAndMark bufId seqNo off1 off2
 
-parseMessage :: String -> Message
+parseMessage :: String -> Either String Message
 parseMessage m = case parse messageParser "(unknown)" m of
-    Left parseError -> ErroneousMessage $ show parseError
-    Right message -> message
+    Left parseError -> Left $ show parseError
+    Right message -> Right message
 
 printMessage :: Message -> String
 printMessage (Auth s) = "AUTH " ++ s ++ "\n"
