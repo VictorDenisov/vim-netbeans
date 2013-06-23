@@ -14,6 +14,9 @@ parseVersionMessage = (N.Version 0 1 "2.5") @=? (N.parseMessage "0:version=1 \"2
 parseFileOpenedMessage :: Assertion
 parseFileOpenedMessage = (N.FileOpened 0 1 "pathname" True False) @=? (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
 
+parseNewDotAndMarkMessage :: Assertion
+parseNewDotAndMarkMessage = (N.NewDotAndMark 0 1 3 4) @=? (N.parseMessage "0:newDotAndMark=1 3 4")
+
 parseStartupDoneMessage :: Assertion
 parseStartupDoneMessage = (N.StartupDone 0 1) @=? (N.parseMessage "0:startupDone=1")
 

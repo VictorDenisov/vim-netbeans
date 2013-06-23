@@ -51,6 +51,11 @@ data Message = Auth String
                 String -- path
                 Bool -- open
                 Bool -- modified
+             | NewDotAndMark
+                Int -- buf
+                Int -- seqNo
+                Int -- off1
+                Int -- off2
              | Version
                 Int -- buf
                 Int -- seqNo
@@ -75,6 +80,7 @@ messageParser = try authParser
             <|> try versionParser
             <|> try startupDoneParser
             <|> try fileOpenedParser
+            <|> try newDotAndMarkParser
             <|> parseError
 
 parseError :: CharParser st Message
@@ -125,6 +131,17 @@ fileOpenedParser = do
     char ' '
     modified <- oneOf "TF"
     return $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
+
+newDotAndMarkParser :: CharParser st Message
+newDotAndMarkParser = do
+    bufId <- parseNumber
+    string ":newDotAndMark="
+    seqNo <- parseNumber
+    char ' '
+    off1 <- parseNumber
+    char ' '
+    off2 <- parseNumber
+    return $ NewDotAndMark bufId seqNo off1 off2
 
 parseMessage :: String -> Message
 parseMessage m = case parse messageParser "(unknown)" m of
