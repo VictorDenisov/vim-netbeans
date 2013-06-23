@@ -51,6 +51,10 @@ data Message = Auth String
                 String -- path
                 Bool -- open
                 Bool -- modified
+             | KeyCommand
+                Int -- buf
+                Int -- seqNo
+                String -- key
              | NewDotAndMark
                 Int -- buf
                 Int -- seqNo
@@ -80,6 +84,7 @@ messageParser = try authParser
             <|> try startupDoneParser
             <|> try fileOpenedParser
             <|> try newDotAndMarkParser
+            <|> try keyCommandParser
             <|> parseError
 
 parseError :: CharParser st Message
@@ -129,6 +134,15 @@ fileOpenedParser = do
     char ' '
     modified <- oneOf "TF"
     return $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
+
+keyCommandParser :: CharParser st Message
+keyCommandParser = do
+    bufId <- parseNumber
+    string ":keyCommand="
+    seqN <- parseNumber
+    string " \""
+    key <- many1 $ noneOf "\""
+    return $ KeyCommand bufId seqN key
 
 newDotAndMarkParser :: CharParser st Message
 newDotAndMarkParser = do

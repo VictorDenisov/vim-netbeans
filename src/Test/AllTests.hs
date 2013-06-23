@@ -14,6 +14,11 @@ parseVersionMessage = (Right $ N.Version 0 1 "2.5") @=? (N.parseMessage "0:versi
 parseFileOpenedMessage :: Assertion
 parseFileOpenedMessage = (Right $ N.FileOpened 0 1 "pathname" True False) @=? (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
 
+parseKeyCommandMessage :: Assertion
+parseKeyCommandMessage = (Right $ N.KeyCommand 0 1 "F1")
+                         @=?
+                         (N.parseMessage "0:keyCommand=1 \"F1\"")
+
 parseNewDotAndMarkMessage :: Assertion
 parseNewDotAndMarkMessage = (Right $ N.NewDotAndMark 0 1 3 4) @=? (N.parseMessage "0:newDotAndMark=1 3 4")
 
