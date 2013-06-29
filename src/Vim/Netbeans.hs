@@ -39,53 +39,68 @@ runNetbeans port password vm = do
 initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
-data Message = Auth String
-             | Create
-                Int -- buf
-                Int -- seqNo
-             | Disconnect
-             | Detach
-             | EditFile
-                Int -- buf
-                Int -- seqNo
-                String -- path
-             | FileOpened
+data VimMessage = EventMessage Event
+                | ReplyMessage Reply
+                  deriving (Eq, Show)
+
+data IdeMessage = CommandMessage  Command
+                | FunctionMessage Function
+                  deriving (Eq, Show)
+
+data Reply = Reply
+             deriving (Eq, Show)
+data Function = Function
+                deriving (Eq, Show)
+
+data Event = Auth String
+           | FileOpened
                 Int -- buf
                 Int -- seqNo
                 String -- path
                 Bool -- open
                 Bool -- modified
-             | KeyCommand
+           | KeyCommand
                 Int -- buf
                 Int -- seqNo
                 String -- key
-             | NewDotAndMark
+           | NewDotAndMark
                 Int -- buf
                 Int -- seqNo
                 Int -- off1
                 Int -- off2
-             | Version
+           | StartupDone
+                Int -- buf
+                Int -- seqNo
+           | Version
                 Int -- buf
                 Int -- seqNo
                 String
+           | E463
+           | E532
+           | E656
+           | E657
+           | E658
+           | E744
+             deriving (Eq, Show)
+
+data Command = Create
+                Int -- buf
+                Int -- seqNo
+             | Detach
+             | DisconnectCommand
+             | EditFile
+                Int -- buf
+                Int -- seqNo
+                String -- path
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
-             | StartupDone
-                Int -- buf
-                Int -- seqNo
-             | E463
-             | E532
-             | E656
-             | E657
-             | E658
-             | E744
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
 parseNumber = read <$> many1 digit
 
-messageParser :: CharParser st Message
+messageParser :: CharParser st VimMessage
 messageParser = try authParser
             <|> try versionParser
             <|> try startupDoneParser
@@ -94,25 +109,25 @@ messageParser = try authParser
             <|> try keyCommandParser
             <|> parseError
 
-parseError :: CharParser st Message
+parseError :: CharParser st VimMessage
 parseError = do
     char 'E'
     s <- count 3 digit
     case s of
-        "463" -> return E463 -- Region is guarded, cannot modify
-        "532" -> return E532 -- The defineAnnoType highlighting color name is too long
-        "656" -> return E656 -- Writes of unmodified buffers forbidden
-        "657" -> return E657 -- Partial writes disallowed
-        "658" -> return E658 -- Connection lost for this buffer
-        "744" -> return E744 -- Read-only file
+        "463" -> return $ EventMessage E463 -- Region is guarded, cannot modify
+        "532" -> return $ EventMessage E532 -- The defineAnnoType highlighting color name is too long
+        "656" -> return $ EventMessage E656 -- Writes of unmodified buffers forbidden
+        "657" -> return $ EventMessage E657 -- Partial writes disallowed
+        "658" -> return $ EventMessage E658 -- Connection lost for this buffer
+        "744" -> return $ EventMessage E744 -- Read-only file
 
-authParser :: CharParser st Message
+authParser :: CharParser st VimMessage
 authParser = do
     string "AUTH "
     s <- many1 anyChar
-    return $ Auth s
+    return $ EventMessage $ Auth s
 
-versionParser :: CharParser st Message
+versionParser :: CharParser st VimMessage
 versionParser = do
     bufId <- parseNumber
     string ":version="
@@ -120,16 +135,16 @@ versionParser = do
     string " \""
     ver <- many1 (oneOf "0123456789.")
     char '\"'
-    return $ Version bufId seqN ver
+    return $ EventMessage $ Version bufId seqN ver
 
-startupDoneParser :: CharParser st Message
+startupDoneParser :: CharParser st VimMessage
 startupDoneParser = do
     bufId <- parseNumber
     string ":startupDone="
     seqN <- parseNumber
-    return $ StartupDone bufId seqN
+    return $ EventMessage $ StartupDone bufId seqN
 
-fileOpenedParser :: CharParser st Message
+fileOpenedParser :: CharParser st VimMessage
 fileOpenedParser = do
     bufId <- parseNumber
     string ":fileOpened="
@@ -140,18 +155,18 @@ fileOpenedParser = do
     open <- oneOf "TF"
     char ' '
     modified <- oneOf "TF"
-    return $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
+    return $ EventMessage $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
 
-keyCommandParser :: CharParser st Message
+keyCommandParser :: CharParser st VimMessage
 keyCommandParser = do
     bufId <- parseNumber
     string ":keyCommand="
     seqN <- parseNumber
     string " \""
     key <- many1 $ noneOf "\""
-    return $ KeyCommand bufId seqN key
+    return $ EventMessage $ KeyCommand bufId seqN key
 
-newDotAndMarkParser :: CharParser st Message
+newDotAndMarkParser :: CharParser st VimMessage
 newDotAndMarkParser = do
     bufId <- parseNumber
     string ":newDotAndMark="
@@ -160,20 +175,19 @@ newDotAndMarkParser = do
     off1 <- parseNumber
     char ' '
     off2 <- parseNumber
-    return $ NewDotAndMark bufId seqNo off1 off2
+    return $ EventMessage $ NewDotAndMark bufId seqNo off1 off2
 
-parseMessage :: String -> Either String Message
+parseMessage :: String -> Either String VimMessage
 parseMessage m = case parse messageParser "(unknown)" m of
     Left parseError -> Left $ show parseError
     Right message -> Right message
 
-printMessage :: Message -> String
-printMessage (Auth s) = "AUTH " ++ s ++ "\n"
-printMessage Disconnect = "DISCONNECT\n"
-printMessage Detach = "DETACH\n"
-printMessage (Create bufId seqNo) = (show bufId) ++ ":create!" ++ (show seqNo)
-printMessage (EditFile bufId seqNo path) =
+printMessage :: IdeMessage -> String
+printMessage (CommandMessage DisconnectCommand) = "DISCONNECT\n"
+printMessage (CommandMessage Detach) = "DETACH\n"
+printMessage (CommandMessage (Create bufId seqNo)) = (show bufId) ++ ":create!" ++ (show seqNo)
+printMessage (CommandMessage (EditFile bufId seqNo path)) =
     (show bufId) ++ ":editFile!" ++ (show seqNo) ++
     " \"" ++ path ++ "\""
-printMessage (SetReadOnly bufId seqNo) =
+printMessage (CommandMessage (SetReadOnly bufId seqNo)) =
     (show bufId) ++ ":setReadOnly!" ++ (show seqNo)

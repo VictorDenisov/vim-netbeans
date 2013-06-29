@@ -6,44 +6,41 @@ import Test.HUnit
 import qualified Vim.Netbeans as N
 
 parseAuthMessage :: Assertion
-parseAuthMessage = (Right $ N.Auth "password") @=? (N.parseMessage "AUTH password")
+parseAuthMessage = (Right $ N.EventMessage $ N.Auth "password") @=? (N.parseMessage "AUTH password")
 
 parseVersionMessage :: Assertion
-parseVersionMessage = (Right $ N.Version 0 1 "2.5") @=? (N.parseMessage "0:version=1 \"2.5\"")
+parseVersionMessage = (Right $ N.EventMessage $ N.Version 0 1 "2.5") @=? (N.parseMessage "0:version=1 \"2.5\"")
 
 parseFileOpenedMessage :: Assertion
-parseFileOpenedMessage = (Right $ N.FileOpened 0 1 "pathname" True False) @=? (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
+parseFileOpenedMessage = (Right $ N.EventMessage $ N.FileOpened 0 1 "pathname" True False) @=? (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
 
 parseKeyCommandMessage :: Assertion
-parseKeyCommandMessage = (Right $ N.KeyCommand 0 1 "F1")
+parseKeyCommandMessage = (Right $ N.EventMessage $ N.KeyCommand 0 1 "F1")
                          @=?
                          (N.parseMessage "0:keyCommand=1 \"F1\"")
 
 parseNewDotAndMarkMessage :: Assertion
-parseNewDotAndMarkMessage = (Right $ N.NewDotAndMark 0 1 3 4) @=? (N.parseMessage "0:newDotAndMark=1 3 4")
+parseNewDotAndMarkMessage = (Right $ N.EventMessage $ N.NewDotAndMark 0 1 3 4) @=? (N.parseMessage "0:newDotAndMark=1 3 4")
 
 parseStartupDoneMessage :: Assertion
-parseStartupDoneMessage = (Right $ N.StartupDone 0 1) @=? (N.parseMessage "0:startupDone=1")
+parseStartupDoneMessage = (Right $ N.EventMessage $ N.StartupDone 0 1) @=? (N.parseMessage "0:startupDone=1")
 
 parseErrorMessage :: Assertion
-parseErrorMessage = (Right N.E463) @=? (N.parseMessage "E463")
-
-printAuthMessage :: Assertion
-printAuthMessage = "AUTH password\n" @=? (N.printMessage (N.Auth "password"))
+parseErrorMessage = (Right $ N.EventMessage $ N.E463) @=? (N.parseMessage "E463")
 
 printCreateMessage :: Assertion
-printCreateMessage = "0:create!1" @=? (N.printMessage $ N.Create 0 1)
+printCreateMessage = "0:create!1" @=? (N.printMessage $ N.CommandMessage $ N.Create 0 1)
 
 printEditFileMessage :: Assertion
 printEditFileMessage = "0:editFile!1 \"testfile.txt\""
                        @=?
-                       (N.printMessage $ N.EditFile 0 1 "testfile.txt")
+                       (N.printMessage $ N.CommandMessage $ N.EditFile 0 1 "testfile.txt")
 
 printDisconnectMessage :: Assertion
-printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage N.Disconnect)
+printDisconnectMessage = "DISCONNECT\n" @=? (N.printMessage $ N.CommandMessage N.DisconnectCommand)
 
 printDetachMessage :: Assertion
-printDetachMessage = "DETACH\n" @=? (N.printMessage N.Detach)
+printDetachMessage = "DETACH\n" @=? (N.printMessage $ N.CommandMessage $ N.Detach)
 
 printSetReadOnlyMessage :: Assertion
-printSetReadOnlyMessage = "0:setReadOnly!1" @=? (N.printMessage $ N.SetReadOnly 0 1)
+printSetReadOnlyMessage = "0:setReadOnly!1" @=? (N.printMessage $ N.CommandMessage $ N.SetReadOnly 0 1)

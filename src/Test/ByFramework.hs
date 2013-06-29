@@ -17,8 +17,7 @@ tests = [ testGroup "parseMessage"
             , testCase "parseErrorMessage" parseErrorMessage
             ]
         , testGroup "printMessage"
-            [ testCase "printAuthMessage" printAuthMessage
-            , testCase "printDisconnectMessage" printDisconnectMessage
+            [ testCase "printDisconnectMessage" printDisconnectMessage
             , testCase "printDetachMessage" printDetachMessage
             , testCase "printCreateMessage" printCreateMessage
             , testCase "printEditFileMessage" printEditFileMessage
