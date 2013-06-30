@@ -93,6 +93,12 @@ printNetbeansBuffer = "0:netbeansBuffer!1 T"
                       (N.printMessage $ N.CommandMessage
                                                     $ N.NetbeansBuffer 0 1 True)
 
+printPutBufferNumber :: Assertion
+printPutBufferNumber = "0:putBufferNumber!1 \"path\""
+                       @=?
+                       (N.printMessage $ N.CommandMessage
+                                                 $ N.PutBufferNumber 0 1 "path")
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
