@@ -156,6 +156,10 @@ data Command = AddAnno
              | InsertDone
                 Int -- buf
                 Int -- seqNo
+             | NetbeansBuffer
+                Int -- buf
+                Int -- seqNo
+                Bool -- isNetbeansBuffer
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
@@ -246,6 +250,11 @@ parseMessage m = case parse messageParser "(unknown)" m of
     Left parseError -> Left $ show parseError
     Right message -> Right message
 
+printBool :: Bool -> String
+printBool b = case b of
+    True -> "T"
+    False -> "F"
+
 printMessage :: IdeMessage -> String
 printMessage (CommandMessage DisconnectCommand) = "DISCONNECT\n"
 printMessage (CommandMessage Detach) = "DETACH\n"
@@ -273,6 +282,9 @@ printMessage (CommandMessage (InitDone bufId seqNo)) =
     (show bufId) ++ ":initDone!" ++ (show seqNo)
 printMessage (CommandMessage (InsertDone bufId seqNo)) =
     (show bufId) ++ ":insertDone!" ++ (show seqNo)
+printMessage (CommandMessage (NetbeansBuffer bufId seqNo isNetbeans)) =
+    (show bufId) ++ ":netbeansBuffer!" ++ (show seqNo)
+    ++ " " ++ (printBool isNetbeans)
 printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
     (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
     ++ " " ++ (show typeNum)

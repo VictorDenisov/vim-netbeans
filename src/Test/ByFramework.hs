@@ -27,6 +27,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printGuard" printGuard
             , testCase "printInitDone" printInitDone
             , testCase "printInsertDone" printInsertDone
+            , testCase "printNetbeansBuffer" printNetbeansBuffer
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printClose" printClose
             ]

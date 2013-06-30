@@ -87,6 +87,12 @@ printInsertDone = "0:insertDone!1"
                   @=?
                   (N.printMessage $ N.CommandMessage $ N.InsertDone 0 1)
 
+printNetbeansBuffer :: Assertion
+printNetbeansBuffer = "0:netbeansBuffer!1 T"
+                      @=?
+                      (N.printMessage $ N.CommandMessage
+                                                    $ N.NetbeansBuffer 0 1 True)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
