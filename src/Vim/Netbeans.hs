@@ -145,6 +145,11 @@ data Command = AddAnno
              | EndAtomic
                 Int -- buf
                 Int -- seqNo
+             | Guard
+                Int -- buf
+                Int -- seqNo
+                Int -- off
+                Int -- len
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
@@ -244,6 +249,10 @@ printMessage (CommandMessage (EditFile bufId seqNo path)) =
     " \"" ++ path ++ "\""
 printMessage (CommandMessage (EndAtomic bufId seqNo)) =
     (show bufId) ++ ":endAtomic!" ++ (show seqNo)
+printMessage (CommandMessage (Guard bufId seqNo off len)) =
+    (show bufId) ++ ":guard!" ++ (show seqNo)
+    ++ " " ++ (show off)
+    ++ " " ++ (show len)
 printMessage (CommandMessage (SetReadOnly bufId seqNo)) =
     (show bufId) ++ ":setReadOnly!" ++ (show seqNo)
 printMessage (CommandMessage (AddAnno bufId seqNo serNum typeNum off len)) =

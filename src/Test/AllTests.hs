@@ -72,6 +72,11 @@ printEndAtomic = "0:endAtomic!1"
                  @=?
                  (N.printMessage $ N.CommandMessage $ N.EndAtomic 0 1)
 
+printGuard :: Assertion
+printGuard = "0:guard!1 10 14"
+                 @=?
+                 (N.printMessage $ N.CommandMessage $ N.Guard 0 1 10 14)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
