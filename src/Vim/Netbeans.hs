@@ -83,7 +83,14 @@ data Event = Auth String
            | E744
              deriving (Eq, Show)
 
-data Command = Create
+data Command = AddAnno
+                Int -- buf
+                Int -- seqNo
+                Int -- serNum
+                Int -- typeNum
+                Int -- off
+                Int -- len
+             | Create
                 Int -- buf
                 Int -- seqNo
              | Detach
@@ -191,3 +198,9 @@ printMessage (CommandMessage (EditFile bufId seqNo path)) =
     " \"" ++ path ++ "\""
 printMessage (CommandMessage (SetReadOnly bufId seqNo)) =
     (show bufId) ++ ":setReadOnly!" ++ (show seqNo)
+printMessage (CommandMessage (AddAnno bufId seqNo serNum typeNum off len)) =
+    (show bufId) ++ ":addAnno!" ++ (show seqNo)
+    ++ " " ++ (show serNum)
+    ++ " " ++ (show typeNum)
+    ++ " " ++ (show off)
+    ++ " " ++ (show len)

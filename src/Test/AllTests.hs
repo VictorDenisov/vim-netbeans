@@ -41,6 +41,11 @@ parseErrorMessage = (Right $ N.EventMessage $ N.E463)
                     @=?
                     (N.parseMessage "E463")
 
+printAddAnno :: Assertion
+printAddAnno = "0:addAnno!1 2 3 10 5"
+               @=?
+               (N.printMessage $ N.CommandMessage $ N.AddAnno 0 1 2 3 10 5)
+
 printCreateMessage :: Assertion
 printCreateMessage = "0:create!1"
                      @=?

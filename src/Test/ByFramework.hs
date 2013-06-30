@@ -20,6 +20,7 @@ tests = [ testGroup "parseMessage"
             [ testCase "printDisconnectMessage" printDisconnectMessage
             , testCase "printDetachMessage" printDetachMessage
             , testCase "printCreateMessage" printCreateMessage
+            , testCase "printAddAnno" printAddAnno
             , testCase "printEditFileMessage" printEditFileMessage
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             ]
