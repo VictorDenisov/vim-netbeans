@@ -67,6 +67,11 @@ printEditFileMessage = "0:editFile!1 \"testfile.txt\""
                        (N.printMessage $ N.CommandMessage
                                                 $ N.EditFile 0 1 "testfile.txt")
 
+printEndAtomic :: Assertion
+printEndAtomic = "0:endAtomic!1"
+                 @=?
+                 (N.printMessage $ N.CommandMessage $ N.EndAtomic 0 1)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?

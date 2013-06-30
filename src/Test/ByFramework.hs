@@ -23,6 +23,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printDefineAnnoType" printDefineAnnoType
             , testCase "printAddAnno" printAddAnno
             , testCase "printEditFileMessage" printEditFileMessage
+            , testCase "printEndAtomic" printEndAtomic
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printClose" printClose
             ]
