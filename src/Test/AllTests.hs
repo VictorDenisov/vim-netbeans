@@ -109,6 +109,11 @@ printRemoveAnno = "0:removeAnno!1 3"
                   @=?
                   (N.printMessage $ N.CommandMessage $ N.RemoveAnno 0 1 3)
 
+printSave :: Assertion
+printSave = "0:save!1"
+            @=?
+            (N.printMessage $ N.CommandMessage $ N.Save 0 1)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?

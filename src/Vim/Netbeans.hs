@@ -171,6 +171,9 @@ data Command = AddAnno
                 Int -- buf
                 Int -- seqNo
                 Int -- serNum
+             | Save
+                Int -- buf
+                Int -- seqNo
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
@@ -304,6 +307,8 @@ printMessage (CommandMessage (Raise bufId seqNo)) =
 printMessage (CommandMessage (RemoveAnno bufId seqNo serNum)) =
     (show bufId) ++ ":removeAnno!" ++ (show seqNo)
     ++ " " ++ (show serNum)
+printMessage (CommandMessage (Save bufId seqNo)) =
+    (show bufId) ++ ":save!" ++ (show seqNo)
 printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
     (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
     ++ " " ++ (show typeNum)
