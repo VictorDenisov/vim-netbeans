@@ -25,6 +25,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printEditFileMessage" printEditFileMessage
             , testCase "printEndAtomic" printEndAtomic
             , testCase "printGuard" printGuard
+            , testCase "printInitDone" printInitDone
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printClose" printClose
             ]

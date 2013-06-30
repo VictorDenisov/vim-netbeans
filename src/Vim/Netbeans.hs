@@ -150,6 +150,9 @@ data Command = AddAnno
                 Int -- seqNo
                 Int -- off
                 Int -- len
+             | InitDone
+                Int -- buf
+                Int -- seqNo
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
@@ -263,6 +266,8 @@ printMessage (CommandMessage (AddAnno bufId seqNo serNum typeNum off len)) =
     ++ " " ++ (show len)
 printMessage (CommandMessage (Close bufId seqNo)) =
     (show bufId) ++ ":close!" ++ (show seqNo)
+printMessage (CommandMessage (InitDone bufId seqNo)) =
+    (show bufId) ++ ":initDone!" ++ (show seqNo)
 printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
     (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
     ++ " " ++ (show typeNum)
