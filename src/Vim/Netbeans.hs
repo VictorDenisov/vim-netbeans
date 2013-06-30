@@ -83,6 +83,37 @@ data Event = Auth String
            | E744
              deriving (Eq, Show)
 
+data Color = Red
+           | Green
+           | Blue
+           | Cyan
+           | Magenta
+           | Yellow
+           | Gray
+           | Black
+           | Orange
+           | LightRed
+           | LightGreen
+           | LightBlue
+           | LightCyan
+           | LightMagenta
+           | LightYellow
+           | LightGray
+           | White
+           | Purple
+           | DarkRed
+           | DardGreen
+           | DarkBlue
+           | DarkCyan
+           | DarkMagenta
+           | Brown
+           | DarkGray
+           | Violet
+           | SeaGreen
+           | SlateBlue
+           | DarkYellow
+             deriving (Eq, Show)
+
 data Command = AddAnno
                 Int -- buf
                 Int -- seqNo
@@ -90,9 +121,21 @@ data Command = AddAnno
                 Int -- typeNum
                 Int -- off
                 Int -- len
+             | Close
+                Int -- buf
+                Int -- seqNo
              | Create
                 Int -- buf
                 Int -- seqNo
+             | DefineAnnoType
+                Int -- buf
+                Int -- seqNo
+                Int -- typeNum
+                String -- typeName
+                String -- toolTip
+                String -- glyphFile
+                Color -- fg
+                Color -- bg
              | Detach
              | DisconnectCommand
              | EditFile
@@ -204,3 +247,13 @@ printMessage (CommandMessage (AddAnno bufId seqNo serNum typeNum off len)) =
     ++ " " ++ (show typeNum)
     ++ " " ++ (show off)
     ++ " " ++ (show len)
+printMessage (CommandMessage (Close bufId seqNo)) =
+    (show bufId) ++ ":close!" ++ (show seqNo)
+printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
+    (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
+    ++ " " ++ (show typeNum)
+    ++ " \"" ++ typeName ++ "\""
+    ++ " \"" ++ tooltip ++ "\""
+    ++ " \"" ++ glyphFile ++ "\""
+    ++ " " ++ (show fg)
+    ++ " " ++ (show bg)
