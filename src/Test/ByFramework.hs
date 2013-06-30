@@ -29,6 +29,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printInsertDone" printInsertDone
             , testCase "printNetbeansBuffer" printNetbeansBuffer
             , testCase "printPutBufferNumber" printPutBufferNumber
+            , testCase "printRaise" printRaise
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printClose" printClose
             ]

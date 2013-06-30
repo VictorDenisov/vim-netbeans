@@ -99,6 +99,11 @@ printPutBufferNumber = "0:putBufferNumber!1 \"path\""
                        (N.printMessage $ N.CommandMessage
                                                  $ N.PutBufferNumber 0 1 "path")
 
+printRaise :: Assertion
+printRaise = "0:raise!1"
+             @=?
+             (N.printMessage $ N.CommandMessage $ N.Raise 0 1)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?

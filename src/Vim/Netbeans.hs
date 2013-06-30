@@ -164,6 +164,9 @@ data Command = AddAnno
                 Int -- buf
                 Int -- seqNo
                 String -- isNetbeansBuffer
+             | Raise
+                Int -- buf
+                Int -- seqNo
              | SetReadOnly
                 Int -- buf
                 Int -- seqNo
@@ -292,6 +295,8 @@ printMessage (CommandMessage (NetbeansBuffer bufId seqNo isNetbeans)) =
 printMessage (CommandMessage (PutBufferNumber bufId seqNo path)) =
     (show bufId) ++ ":putBufferNumber!" ++ (show seqNo)
     ++ " " ++ (show path)
+printMessage (CommandMessage (Raise bufId seqNo)) =
+    (show bufId) ++ ":raise!" ++ (show seqNo)
 printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
     (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
     ++ " " ++ (show typeNum)
