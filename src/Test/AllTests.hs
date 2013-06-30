@@ -82,6 +82,11 @@ printInitDone = "0:initDone!1"
                 @=?
                 (N.printMessage $ N.CommandMessage $ N.InitDone 0 1)
 
+printInsertDone :: Assertion
+printInsertDone = "0:insertDone!1"
+                  @=?
+                  (N.printMessage $ N.CommandMessage $ N.InsertDone 0 1)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
