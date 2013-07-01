@@ -230,53 +230,60 @@ printBool b = case b of
     True -> "T"
     False -> "F"
 
-printMessage :: IdeMessage -> String
-printMessage DisconnectCommand = "DISCONNECT\n"
-printMessage Detach = "DETACH\n"
-printMessage (CommandMessage bufId seqNo Create) = (show bufId) ++ ":create!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (EditFile path)) =
-    (show bufId) ++ ":editFile!" ++ (show seqNo) ++
-    " \"" ++ path ++ "\""
-printMessage (CommandMessage bufId seqNo EndAtomic) =
-    (show bufId) ++ ":endAtomic!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (Guard off len)) =
-    (show bufId) ++ ":guard!" ++ (show seqNo)
-    ++ " " ++ (show off)
+printCommandName :: Command -> String
+printCommandName Create = "create"
+printCommandName EditFile {} = "editFile"
+printCommandName EndAtomic {} = "endAtomic"
+printCommandName Guard {} = "guard"
+printCommandName SetReadOnly {} = "setReadOnly"
+printCommandName AddAnno {} = "addAnno"
+printCommandName Close {} = "close"
+printCommandName InitDone {} = "initDone"
+printCommandName InsertDone {} = "insertDone"
+printCommandName NetbeansBuffer {} = "netbeansBuffer"
+printCommandName PutBufferNumber {} = "putBufferNumber"
+printCommandName Raise {} = "raise"
+printCommandName RemoveAnno {} = "removeAnno"
+printCommandName Save {} = "save"
+printCommandName SaveDone {} = "saveDone"
+printCommandName DefineAnnoType {} = "defineAnnoType"
+
+printCommandArgs :: Command -> String
+printCommandArgs Create = ""
+printCommandArgs (EditFile path) = " \"" ++ path ++ "\""
+printCommandArgs EndAtomic = ""
+printCommandArgs (Guard off len) =
+       " " ++ (show off)
     ++ " " ++ (show len)
-printMessage (CommandMessage bufId seqNo SetReadOnly) =
-    (show bufId) ++ ":setReadOnly!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (AddAnno serNum typeNum off len)) =
-    (show bufId) ++ ":addAnno!" ++ (show seqNo)
-    ++ " " ++ (show serNum)
+printCommandArgs SetReadOnly = ""
+printCommandArgs (AddAnno serNum typeNum off len) =
+       " " ++ (show serNum)
     ++ " " ++ (show typeNum)
     ++ " " ++ (show off)
     ++ " " ++ (show len)
-printMessage (CommandMessage bufId seqNo Close) =
-    (show bufId) ++ ":close!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo InitDone) =
-    (show bufId) ++ ":initDone!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo InsertDone) =
-    (show bufId) ++ ":insertDone!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (NetbeansBuffer isNetbeans)) =
-    (show bufId) ++ ":netbeansBuffer!" ++ (show seqNo)
-    ++ " " ++ (printBool isNetbeans)
-printMessage (CommandMessage bufId seqNo (PutBufferNumber path)) =
-    (show bufId) ++ ":putBufferNumber!" ++ (show seqNo)
-    ++ " " ++ (show path)
-printMessage (CommandMessage bufId seqNo Raise) =
-    (show bufId) ++ ":raise!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (RemoveAnno serNum)) =
-    (show bufId) ++ ":removeAnno!" ++ (show seqNo)
-    ++ " " ++ (show serNum)
-printMessage (CommandMessage bufId seqNo Save) =
-    (show bufId) ++ ":save!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo SaveDone) =
-    (show bufId) ++ ":saveDone!" ++ (show seqNo)
-printMessage (CommandMessage bufId seqNo (DefineAnnoType typeNum typeName tooltip glyphFile fg bg)) =
-    (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
-    ++ " " ++ (show typeNum)
+printCommandArgs Close = ""
+printCommandArgs InitDone = ""
+printCommandArgs InsertDone = ""
+printCommandArgs (NetbeansBuffer isNetbeansBuffer) =
+       " " ++ (printBool isNetbeansBuffer)
+printCommandArgs (PutBufferNumber path) =
+       " " ++ (show path)
+printCommandArgs Raise = ""
+printCommandArgs (RemoveAnno serNum) =
+       " " ++ (show serNum)
+printCommandArgs Save = ""
+printCommandArgs SaveDone = ""
+printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
+    " " ++ (show typeNum)
     ++ " \"" ++ typeName ++ "\""
     ++ " \"" ++ tooltip ++ "\""
     ++ " \"" ++ glyphFile ++ "\""
     ++ " " ++ (show fg)
     ++ " " ++ (show bg)
+
+printMessage :: IdeMessage -> String
+printMessage DisconnectCommand = "DISCONNECT\n"
+printMessage Detach = "DETACH\n"
+printMessage (CommandMessage bufId seqNo command) =
+    (show bufId) ++ ":" ++ (printCommandName command) ++ "!" ++ (show seqNo)
+    ++ (printCommandArgs command)
