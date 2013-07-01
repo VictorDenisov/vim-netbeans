@@ -135,6 +135,11 @@ printSetBufferNumber = "0:setBufferNumber!1 \"path\""
                      (N.printMessage $ N.CommandMessage 0 1
                                                     $ N.SetBufferNumber "path")
 
+printSetDot :: Assertion
+printSetDot = "0:setDot!1 10"
+              @=?
+              (N.printMessage $ N.CommandMessage 0 1 $ N.SetDot 10)
+
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?

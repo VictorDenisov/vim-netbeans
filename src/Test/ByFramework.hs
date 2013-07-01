@@ -35,6 +35,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printSaveDone" printSaveDone
             , testCase "printSetBufferNumber" printSetBufferNumber
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
+            , testCase "printSetDot" printSetDot
             , testCase "printClose" printClose
             ]
         ]
