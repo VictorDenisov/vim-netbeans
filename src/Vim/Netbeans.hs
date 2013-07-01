@@ -143,6 +143,8 @@ data Command = AddAnno
                 Int -- off
              | SetExitDelay
                 Int -- delay seconds
+             | SetFullName
+                String -- fullname
              | SetReadOnly
                deriving (Eq, Show)
 
@@ -262,6 +264,7 @@ printCommandName SaveDone {} = "saveDone"
 printCommandName SetBufferNumber {} = "setBufferNumber"
 printCommandName SetDot {} = "setDot"
 printCommandName SetExitDelay {} = "setExitDelay"
+printCommandName SetFullName {} = "setFullName"
 printCommandName SetReadOnly {} = "setReadOnly"
 
 printCommandArgs :: Command -> String
@@ -302,4 +305,6 @@ printCommandArgs (SetDot off) =
        " " ++ (show off)
 printCommandArgs (SetExitDelay delay) =
        " " ++ (show delay)
+printCommandArgs (SetFullName fullName) =
+       " " ++ (show fullName)
 printCommandArgs SetReadOnly = ""

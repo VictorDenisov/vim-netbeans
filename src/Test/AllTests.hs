@@ -145,6 +145,12 @@ printSetExitDelay = "0:setExitDelay!1 10"
                     @=?
                     (N.printMessage $ N.CommandMessage 0 1 $ N.SetExitDelay 10)
 
+printSetFullName :: Assertion
+printSetFullName = "0:setFullName!1 \"fullName\""
+                    @=?
+                    (N.printMessage $ N.CommandMessage 0 1
+                                                    $ N.SetFullName "fullName")
+
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?
