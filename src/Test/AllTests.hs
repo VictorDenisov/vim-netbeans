@@ -114,6 +114,11 @@ printSave = "0:save!1"
             @=?
             (N.printMessage $ N.CommandMessage $ N.Save 0 1)
 
+printSaveDone :: Assertion
+printSaveDone = "0:saveDone!1"
+                @=?
+                (N.printMessage $ N.CommandMessage $ N.SaveDone 0 1)
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
