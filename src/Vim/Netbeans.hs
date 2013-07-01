@@ -50,8 +50,10 @@ data VimMessage = EventMessage Int Int Event -- buf seqNo event
                 | E744
                   deriving (Eq, Show)
 
-data IdeMessage = CommandMessage  Command
+data IdeMessage = CommandMessage Int Int Command -- buf seqNo command
                 | FunctionMessage Function
+                | Detach
+                | DisconnectCommand
                   deriving (Eq, Show)
 
 data Reply = Reply
@@ -105,71 +107,37 @@ data Color = Red
              deriving (Eq, Show)
 
 data Command = AddAnno
-                Int -- buf
-                Int -- seqNo
                 Int -- serNum
                 Int -- typeNum
                 Int -- off
                 Int -- len
              | Close
-                Int -- buf
-                Int -- seqNo
              | Create
-                Int -- buf
-                Int -- seqNo
              | DefineAnnoType
-                Int -- buf
-                Int -- seqNo
                 Int -- typeNum
                 String -- typeName
                 String -- toolTip
                 String -- glyphFile
                 Color -- fg
                 Color -- bg
-             | Detach
-             | DisconnectCommand
              | EditFile
-                Int -- buf
-                Int -- seqNo
                 String -- path
              | EndAtomic
-                Int -- buf
-                Int -- seqNo
              | Guard
-                Int -- buf
-                Int -- seqNo
                 Int -- off
                 Int -- len
              | InitDone
-                Int -- buf
-                Int -- seqNo
              | InsertDone
-                Int -- buf
-                Int -- seqNo
              | NetbeansBuffer
-                Int -- buf
-                Int -- seqNo
                 Bool -- isNetbeansBuffer
              | PutBufferNumber
-                Int -- buf
-                Int -- seqNo
                 String -- isNetbeansBuffer
              | Raise
-                Int -- buf
-                Int -- seqNo
              | RemoveAnno
-                Int -- buf
-                Int -- seqNo
                 Int -- serNum
              | Save
-                Int -- buf
-                Int -- seqNo
              | SaveDone
-                Int -- buf
-                Int -- seqNo
              | SetReadOnly
-                Int -- buf
-                Int -- seqNo
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -263,48 +231,48 @@ printBool b = case b of
     False -> "F"
 
 printMessage :: IdeMessage -> String
-printMessage (CommandMessage DisconnectCommand) = "DISCONNECT\n"
-printMessage (CommandMessage Detach) = "DETACH\n"
-printMessage (CommandMessage (Create bufId seqNo)) = (show bufId) ++ ":create!" ++ (show seqNo)
-printMessage (CommandMessage (EditFile bufId seqNo path)) =
+printMessage DisconnectCommand = "DISCONNECT\n"
+printMessage Detach = "DETACH\n"
+printMessage (CommandMessage bufId seqNo Create) = (show bufId) ++ ":create!" ++ (show seqNo)
+printMessage (CommandMessage bufId seqNo (EditFile path)) =
     (show bufId) ++ ":editFile!" ++ (show seqNo) ++
     " \"" ++ path ++ "\""
-printMessage (CommandMessage (EndAtomic bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo EndAtomic) =
     (show bufId) ++ ":endAtomic!" ++ (show seqNo)
-printMessage (CommandMessage (Guard bufId seqNo off len)) =
+printMessage (CommandMessage bufId seqNo (Guard off len)) =
     (show bufId) ++ ":guard!" ++ (show seqNo)
     ++ " " ++ (show off)
     ++ " " ++ (show len)
-printMessage (CommandMessage (SetReadOnly bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo SetReadOnly) =
     (show bufId) ++ ":setReadOnly!" ++ (show seqNo)
-printMessage (CommandMessage (AddAnno bufId seqNo serNum typeNum off len)) =
+printMessage (CommandMessage bufId seqNo (AddAnno serNum typeNum off len)) =
     (show bufId) ++ ":addAnno!" ++ (show seqNo)
     ++ " " ++ (show serNum)
     ++ " " ++ (show typeNum)
     ++ " " ++ (show off)
     ++ " " ++ (show len)
-printMessage (CommandMessage (Close bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo Close) =
     (show bufId) ++ ":close!" ++ (show seqNo)
-printMessage (CommandMessage (InitDone bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo InitDone) =
     (show bufId) ++ ":initDone!" ++ (show seqNo)
-printMessage (CommandMessage (InsertDone bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo InsertDone) =
     (show bufId) ++ ":insertDone!" ++ (show seqNo)
-printMessage (CommandMessage (NetbeansBuffer bufId seqNo isNetbeans)) =
+printMessage (CommandMessage bufId seqNo (NetbeansBuffer isNetbeans)) =
     (show bufId) ++ ":netbeansBuffer!" ++ (show seqNo)
     ++ " " ++ (printBool isNetbeans)
-printMessage (CommandMessage (PutBufferNumber bufId seqNo path)) =
+printMessage (CommandMessage bufId seqNo (PutBufferNumber path)) =
     (show bufId) ++ ":putBufferNumber!" ++ (show seqNo)
     ++ " " ++ (show path)
-printMessage (CommandMessage (Raise bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo Raise) =
     (show bufId) ++ ":raise!" ++ (show seqNo)
-printMessage (CommandMessage (RemoveAnno bufId seqNo serNum)) =
+printMessage (CommandMessage bufId seqNo (RemoveAnno serNum)) =
     (show bufId) ++ ":removeAnno!" ++ (show seqNo)
     ++ " " ++ (show serNum)
-printMessage (CommandMessage (Save bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo Save) =
     (show bufId) ++ ":save!" ++ (show seqNo)
-printMessage (CommandMessage (SaveDone bufId seqNo)) =
+printMessage (CommandMessage bufId seqNo SaveDone) =
     (show bufId) ++ ":saveDone!" ++ (show seqNo)
-printMessage (CommandMessage (DefineAnnoType bufId seqNo typeNum typeName tooltip glyphFile fg bg)) =
+printMessage (CommandMessage bufId seqNo (DefineAnnoType typeNum typeName tooltip glyphFile fg bg)) =
     (show bufId) ++ ":defineAnnoType!" ++ (show seqNo)
     ++ " " ++ (show typeNum)
     ++ " \"" ++ typeName ++ "\""

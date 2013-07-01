@@ -44,93 +44,92 @@ parseErrorMessage = (Right $ N.E463)
 printAddAnno :: Assertion
 printAddAnno = "0:addAnno!1 2 3 10 5"
                @=?
-               (N.printMessage $ N.CommandMessage $ N.AddAnno 0 1 2 3 10 5)
+               (N.printMessage $ N.CommandMessage 0 1 $ N.AddAnno 2 3 10 5)
 
 printClose :: Assertion
 printClose = "0:close!1"
                @=?
-               (N.printMessage $ N.CommandMessage $ N.Close 0 1)
+               (N.printMessage $ N.CommandMessage 0 1 N.Close)
 
 printCreateMessage :: Assertion
 printCreateMessage = "0:create!1"
                      @=?
-                     (N.printMessage $ N.CommandMessage $ N.Create 0 1)
+                     (N.printMessage $ N.CommandMessage 0 1 N.Create)
 
 printDefineAnnoType :: Assertion
 printDefineAnnoType = "0:defineAnnoType!1 2 \"typeName\" \"toolTip\" \"glyphFile\" Red Green"
                      @=?
-                     (N.printMessage $ N.CommandMessage $ N.DefineAnnoType 0 1 2 "typeName" "toolTip" "glyphFile" N.Red N.Green)
+                     (N.printMessage $ N.CommandMessage 0 1 $ N.DefineAnnoType 2 "typeName" "toolTip" "glyphFile" N.Red N.Green)
 
 printEditFileMessage :: Assertion
 printEditFileMessage = "0:editFile!1 \"testfile.txt\""
                        @=?
-                       (N.printMessage $ N.CommandMessage
-                                                $ N.EditFile 0 1 "testfile.txt")
+                       (N.printMessage $ N.CommandMessage 0 1
+                                                $ N.EditFile "testfile.txt")
 
 printEndAtomic :: Assertion
 printEndAtomic = "0:endAtomic!1"
                  @=?
-                 (N.printMessage $ N.CommandMessage $ N.EndAtomic 0 1)
+                 (N.printMessage $ N.CommandMessage 0 1 N.EndAtomic)
 
 printGuard :: Assertion
 printGuard = "0:guard!1 10 14"
              @=?
-             (N.printMessage $ N.CommandMessage $ N.Guard 0 1 10 14)
+             (N.printMessage $ N.CommandMessage 0 1 $ N.Guard 10 14)
 
 printInitDone :: Assertion
 printInitDone = "0:initDone!1"
                 @=?
-                (N.printMessage $ N.CommandMessage $ N.InitDone 0 1)
+                (N.printMessage $ N.CommandMessage 0 1 N.InitDone)
 
 printInsertDone :: Assertion
 printInsertDone = "0:insertDone!1"
                   @=?
-                  (N.printMessage $ N.CommandMessage $ N.InsertDone 0 1)
+                  (N.printMessage $ N.CommandMessage 0 1 N.InsertDone)
 
 printNetbeansBuffer :: Assertion
 printNetbeansBuffer = "0:netbeansBuffer!1 T"
                       @=?
-                      (N.printMessage $ N.CommandMessage
-                                                    $ N.NetbeansBuffer 0 1 True)
+                      (N.printMessage $ N.CommandMessage 0 1
+                                                    $ N.NetbeansBuffer True)
 
 printPutBufferNumber :: Assertion
 printPutBufferNumber = "0:putBufferNumber!1 \"path\""
                        @=?
-                       (N.printMessage $ N.CommandMessage
-                                                 $ N.PutBufferNumber 0 1 "path")
+                       (N.printMessage $ N.CommandMessage 0 1
+                                                 $ N.PutBufferNumber "path")
 
 printRaise :: Assertion
 printRaise = "0:raise!1"
              @=?
-             (N.printMessage $ N.CommandMessage $ N.Raise 0 1)
+             (N.printMessage $ N.CommandMessage 0 1 N.Raise)
 
 printRemoveAnno :: Assertion
 printRemoveAnno = "0:removeAnno!1 3"
                   @=?
-                  (N.printMessage $ N.CommandMessage $ N.RemoveAnno 0 1 3)
+                  (N.printMessage $ N.CommandMessage 0 1 $ N.RemoveAnno 3)
 
 printSave :: Assertion
 printSave = "0:save!1"
             @=?
-            (N.printMessage $ N.CommandMessage $ N.Save 0 1)
+            (N.printMessage $ N.CommandMessage 0 1 N.Save)
 
 printSaveDone :: Assertion
 printSaveDone = "0:saveDone!1"
                 @=?
-                (N.printMessage $ N.CommandMessage $ N.SaveDone 0 1)
+                (N.printMessage $ N.CommandMessage 0 1 N.SaveDone)
 
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
-                         (N.printMessage $ N.CommandMessage N.DisconnectCommand)
+                         (N.printMessage $ N.DisconnectCommand)
 
 printDetachMessage :: Assertion
 printDetachMessage = "DETACH\n"
                      @=?
-                     (N.printMessage $ N.CommandMessage $ N.Detach)
+                     (N.printMessage $ N.Detach)
 
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?
-                          (N.printMessage $ N.CommandMessage
-                                                            $ N.SetReadOnly 0 1)
+                          (N.printMessage $ N.CommandMessage 0 1 N.SetReadOnly)
