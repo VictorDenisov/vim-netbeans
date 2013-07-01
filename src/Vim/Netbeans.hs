@@ -39,8 +39,9 @@ runNetbeans port password vm = do
 initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
-data VimMessage = EventMessage Event
+data VimMessage = EventMessage Int Int Event -- buf seqNo event
                 | ReplyMessage Reply
+                | Auth String
                 | E463
                 | E532
                 | E656
@@ -58,28 +59,17 @@ data Reply = Reply
 data Function = Function
                 deriving (Eq, Show)
 
-data Event = Auth String
-           | FileOpened
-                Int -- buf
-                Int -- seqNo
+data Event = FileOpened
                 String -- path
                 Bool -- open
                 Bool -- modified
            | KeyCommand
-                Int -- buf
-                Int -- seqNo
                 String -- key
            | NewDotAndMark
-                Int -- buf
-                Int -- seqNo
                 Int -- off1
                 Int -- off2
            | StartupDone
-                Int -- buf
-                Int -- seqNo
            | Version
-                Int -- buf
-                Int -- seqNo
                 String
              deriving (Eq, Show)
 
@@ -210,7 +200,7 @@ authParser :: CharParser st VimMessage
 authParser = do
     string "AUTH "
     s <- many1 anyChar
-    return $ EventMessage $ Auth s
+    return $ Auth s
 
 versionParser :: CharParser st VimMessage
 versionParser = do
@@ -220,14 +210,14 @@ versionParser = do
     string " \""
     ver <- many1 (oneOf "0123456789.")
     char '\"'
-    return $ EventMessage $ Version bufId seqN ver
+    return $ EventMessage bufId seqN $ Version ver
 
 startupDoneParser :: CharParser st VimMessage
 startupDoneParser = do
     bufId <- parseNumber
     string ":startupDone="
     seqN <- parseNumber
-    return $ EventMessage $ StartupDone bufId seqN
+    return $ EventMessage bufId seqN $ StartupDone
 
 fileOpenedParser :: CharParser st VimMessage
 fileOpenedParser = do
@@ -240,7 +230,7 @@ fileOpenedParser = do
     open <- oneOf "TF"
     char ' '
     modified <- oneOf "TF"
-    return $ EventMessage $ FileOpened bufId seqN path (open == 'T') (modified == 'T')
+    return $ EventMessage bufId seqN $ FileOpened path (open == 'T') (modified == 'T')
 
 keyCommandParser :: CharParser st VimMessage
 keyCommandParser = do
@@ -249,7 +239,7 @@ keyCommandParser = do
     seqN <- parseNumber
     string " \""
     key <- many1 $ noneOf "\""
-    return $ EventMessage $ KeyCommand bufId seqN key
+    return $ EventMessage bufId seqN $ KeyCommand key
 
 newDotAndMarkParser :: CharParser st VimMessage
 newDotAndMarkParser = do
@@ -260,7 +250,7 @@ newDotAndMarkParser = do
     off1 <- parseNumber
     char ' '
     off2 <- parseNumber
-    return $ EventMessage $ NewDotAndMark bufId seqNo off1 off2
+    return $ EventMessage bufId seqNo $ NewDotAndMark off1 off2
 
 parseMessage :: String -> Either String VimMessage
 parseMessage m = case parse messageParser "(unknown)" m of

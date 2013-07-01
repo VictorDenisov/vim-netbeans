@@ -6,33 +6,33 @@ import Test.HUnit
 import qualified Vim.Netbeans as N
 
 parseAuthMessage :: Assertion
-parseAuthMessage = (Right $ N.EventMessage $ N.Auth "password")
+parseAuthMessage = (Right $ N.Auth "password")
                    @=?
                    (N.parseMessage "AUTH password")
 
 parseVersionMessage :: Assertion
-parseVersionMessage = (Right $ N.EventMessage $ N.Version 0 1 "2.5")
+parseVersionMessage = (Right $ N.EventMessage 0 1 $ N.Version "2.5")
                       @=?
                       (N.parseMessage "0:version=1 \"2.5\"")
 
 parseFileOpenedMessage :: Assertion
-parseFileOpenedMessage = (Right $ N.EventMessage $ N.FileOpened
-                                                    0 1 "pathname" True False)
+parseFileOpenedMessage = (Right $ N.EventMessage 0 1 $ N.FileOpened
+                                                    "pathname" True False)
                          @=?
                          (N.parseMessage "0:fileOpened=1 \"pathname\" T F")
 
 parseKeyCommandMessage :: Assertion
-parseKeyCommandMessage = (Right $ N.EventMessage $ N.KeyCommand 0 1 "F1")
+parseKeyCommandMessage = (Right $ N.EventMessage 0 1 $ N.KeyCommand "F1")
                          @=?
                          (N.parseMessage "0:keyCommand=1 \"F1\"")
 
 parseNewDotAndMarkMessage :: Assertion
-parseNewDotAndMarkMessage = (Right $ N.EventMessage $ N.NewDotAndMark 0 1 3 4)
+parseNewDotAndMarkMessage = (Right $ N.EventMessage 0 1 $ N.NewDotAndMark 3 4)
                             @=?
                             (N.parseMessage "0:newDotAndMark=1 3 4")
 
 parseStartupDoneMessage :: Assertion
-parseStartupDoneMessage = (Right $ N.EventMessage $ N.StartupDone 0 1)
+parseStartupDoneMessage = (Right $ N.EventMessage 0 1 $ N.StartupDone)
                           @=?
                           (N.parseMessage "0:startupDone=1")
 
