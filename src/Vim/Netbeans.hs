@@ -260,7 +260,8 @@ printCommandName SetBufferNumber {} = "setBufferNumber"
 
 printCommandArgs :: Command -> String
 printCommandArgs Create = ""
-printCommandArgs (EditFile path) = " \"" ++ path ++ "\""
+printCommandArgs (EditFile path) =
+       " " ++ (show path) ++ ""
 printCommandArgs EndAtomic = ""
 printCommandArgs (Guard off len) =
        " " ++ (show off)
@@ -287,8 +288,8 @@ printCommandArgs (SetBufferNumber path) =
        " " ++ (show path)
 printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
     " " ++ (show typeNum)
-    ++ " \"" ++ typeName ++ "\""
-    ++ " \"" ++ tooltip ++ "\""
-    ++ " \"" ++ glyphFile ++ "\""
+    ++ " " ++ (show typeName) ++ ""
+    ++ " " ++ (show tooltip) ++ ""
+    ++ " " ++ (show glyphFile) ++ ""
     ++ " " ++ (show fg)
     ++ " " ++ (show bg)
