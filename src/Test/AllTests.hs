@@ -37,7 +37,7 @@ parseStartupDoneMessage = (Right $ N.EventMessage $ N.StartupDone 0 1)
                           (N.parseMessage "0:startupDone=1")
 
 parseErrorMessage :: Assertion
-parseErrorMessage = (Right $ N.EventMessage $ N.E463)
+parseErrorMessage = (Right $ N.E463)
                     @=?
                     (N.parseMessage "E463")
 

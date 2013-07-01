@@ -41,6 +41,12 @@ initialConnState h = ConnState 0 h Nothing
 
 data VimMessage = EventMessage Event
                 | ReplyMessage Reply
+                | E463
+                | E532
+                | E656
+                | E657
+                | E658
+                | E744
                   deriving (Eq, Show)
 
 data IdeMessage = CommandMessage  Command
@@ -75,12 +81,6 @@ data Event = Auth String
                 Int -- buf
                 Int -- seqNo
                 String
-           | E463
-           | E532
-           | E656
-           | E657
-           | E658
-           | E744
              deriving (Eq, Show)
 
 data Color = Red
@@ -199,12 +199,12 @@ parseError = do
     char 'E'
     s <- count 3 digit
     case s of
-        "463" -> return $ EventMessage E463 -- Region is guarded, cannot modify
-        "532" -> return $ EventMessage E532 -- The defineAnnoType highlighting color name is too long
-        "656" -> return $ EventMessage E656 -- Writes of unmodified buffers forbidden
-        "657" -> return $ EventMessage E657 -- Partial writes disallowed
-        "658" -> return $ EventMessage E658 -- Connection lost for this buffer
-        "744" -> return $ EventMessage E744 -- Read-only file
+        "463" -> return $ E463 -- Region is guarded, cannot modify
+        "532" -> return $ E532 -- The defineAnnoType highlighting color name is too long
+        "656" -> return $ E656 -- Writes of unmodified buffers forbidden
+        "657" -> return $ E657 -- Partial writes disallowed
+        "658" -> return $ E658 -- Connection lost for this buffer
+        "744" -> return $ E744 -- Read-only file
 
 authParser :: CharParser st VimMessage
 authParser = do
