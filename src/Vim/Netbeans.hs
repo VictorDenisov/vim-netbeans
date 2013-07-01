@@ -262,20 +262,26 @@ printCommandName SetDot {} = "setDot"
 printCommandName SetReadOnly {} = "setReadOnly"
 
 printCommandArgs :: Command -> String
-printCommandArgs Create = ""
-printCommandArgs (EditFile path) =
-       " " ++ (show path) ++ ""
-printCommandArgs EndAtomic = ""
-printCommandArgs (Guard off len) =
-       " " ++ (show off)
-    ++ " " ++ (show len)
-printCommandArgs SetReadOnly = ""
 printCommandArgs (AddAnno serNum typeNum off len) =
        " " ++ (show serNum)
     ++ " " ++ (show typeNum)
     ++ " " ++ (show off)
     ++ " " ++ (show len)
 printCommandArgs Close = ""
+printCommandArgs Create = ""
+printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
+    " " ++ (show typeNum)
+    ++ " " ++ (show typeName) ++ ""
+    ++ " " ++ (show tooltip) ++ ""
+    ++ " " ++ (show glyphFile) ++ ""
+    ++ " " ++ (show fg)
+    ++ " " ++ (show bg)
+printCommandArgs (EditFile path) =
+       " " ++ (show path) ++ ""
+printCommandArgs EndAtomic = ""
+printCommandArgs (Guard off len) =
+       " " ++ (show off)
+    ++ " " ++ (show len)
 printCommandArgs InitDone = ""
 printCommandArgs InsertDone = ""
 printCommandArgs (NetbeansBuffer isNetbeansBuffer) =
@@ -291,10 +297,4 @@ printCommandArgs (SetBufferNumber path) =
        " " ++ (show path)
 printCommandArgs (SetDot off) =
        " " ++ (show off)
-printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
-    " " ++ (show typeNum)
-    ++ " " ++ (show typeName) ++ ""
-    ++ " " ++ (show tooltip) ++ ""
-    ++ " " ++ (show glyphFile) ++ ""
-    ++ " " ++ (show fg)
-    ++ " " ++ (show bg)
+printCommandArgs SetReadOnly = ""
