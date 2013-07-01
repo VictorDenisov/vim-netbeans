@@ -225,6 +225,13 @@ parseMessage m = case parse messageParser "(unknown)" m of
     Left parseError -> Left $ show parseError
     Right message -> Right message
 
+printMessage :: IdeMessage -> String
+printMessage DisconnectCommand = "DISCONNECT\n"
+printMessage Detach = "DETACH\n"
+printMessage (CommandMessage bufId seqNo command) =
+    (show bufId) ++ ":" ++ (printCommandName command) ++ "!" ++ (show seqNo)
+    ++ (printCommandArgs command)
+
 printBool :: Bool -> String
 printBool b = case b of
     True -> "T"
@@ -280,10 +287,3 @@ printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
     ++ " \"" ++ glyphFile ++ "\""
     ++ " " ++ (show fg)
     ++ " " ++ (show bg)
-
-printMessage :: IdeMessage -> String
-printMessage DisconnectCommand = "DISCONNECT\n"
-printMessage Detach = "DETACH\n"
-printMessage (CommandMessage bufId seqNo command) =
-    (show bufId) ++ ":" ++ (printCommandName command) ++ "!" ++ (show seqNo)
-    ++ (printCommandArgs command)
