@@ -238,13 +238,13 @@ printBool b = case b of
     False -> "F"
 
 printCommandName :: Command -> String
+printCommandName AddAnno {} = "addAnno"
+printCommandName Close {} = "close"
 printCommandName Create = "create"
+printCommandName DefineAnnoType {} = "defineAnnoType"
 printCommandName EditFile {} = "editFile"
 printCommandName EndAtomic {} = "endAtomic"
 printCommandName Guard {} = "guard"
-printCommandName SetReadOnly {} = "setReadOnly"
-printCommandName AddAnno {} = "addAnno"
-printCommandName Close {} = "close"
 printCommandName InitDone {} = "initDone"
 printCommandName InsertDone {} = "insertDone"
 printCommandName NetbeansBuffer {} = "netbeansBuffer"
@@ -253,7 +253,7 @@ printCommandName Raise {} = "raise"
 printCommandName RemoveAnno {} = "removeAnno"
 printCommandName Save {} = "save"
 printCommandName SaveDone {} = "saveDone"
-printCommandName DefineAnnoType {} = "defineAnnoType"
+printCommandName SetReadOnly {} = "setReadOnly"
 
 printCommandArgs :: Command -> String
 printCommandArgs Create = ""
