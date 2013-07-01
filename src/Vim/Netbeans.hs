@@ -141,6 +141,8 @@ data Command = AddAnno
                 String -- path
              | SetDot
                 Int -- off
+             | SetExitDelay
+                Int -- delay seconds
              | SetReadOnly
                deriving (Eq, Show)
 
@@ -259,6 +261,7 @@ printCommandName Save {} = "save"
 printCommandName SaveDone {} = "saveDone"
 printCommandName SetBufferNumber {} = "setBufferNumber"
 printCommandName SetDot {} = "setDot"
+printCommandName SetExitDelay {} = "setExitDelay"
 printCommandName SetReadOnly {} = "setReadOnly"
 
 printCommandArgs :: Command -> String
@@ -297,4 +300,6 @@ printCommandArgs (SetBufferNumber path) =
        " " ++ (show path)
 printCommandArgs (SetDot off) =
        " " ++ (show off)
+printCommandArgs (SetExitDelay delay) =
+       " " ++ (show delay)
 printCommandArgs SetReadOnly = ""

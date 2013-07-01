@@ -140,6 +140,11 @@ printSetDot = "0:setDot!1 10"
               @=?
               (N.printMessage $ N.CommandMessage 0 1 $ N.SetDot 10)
 
+printSetExitDelay :: Assertion
+printSetExitDelay = "0:setExitDelay!1 10"
+                    @=?
+                    (N.printMessage $ N.CommandMessage 0 1 $ N.SetExitDelay 10)
+
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?
