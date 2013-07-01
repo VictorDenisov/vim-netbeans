@@ -19,9 +19,10 @@ tests = [ testGroup "parseMessage"
         , testGroup "printMessage"
             [ testCase "printDisconnectMessage" printDisconnectMessage
             , testCase "printDetachMessage" printDetachMessage
+            , testCase "printAddAnno" printAddAnno
+            , testCase "printClose" printClose
             , testCase "printCreateMessage" printCreateMessage
             , testCase "printDefineAnnoType" printDefineAnnoType
-            , testCase "printAddAnno" printAddAnno
             , testCase "printEditFileMessage" printEditFileMessage
             , testCase "printEndAtomic" printEndAtomic
             , testCase "printGuard" printGuard
@@ -34,8 +35,7 @@ tests = [ testGroup "parseMessage"
             , testCase "printSave" printSave
             , testCase "printSaveDone" printSaveDone
             , testCase "printSetBufferNumber" printSetBufferNumber
-            , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printSetDot" printSetDot
-            , testCase "printClose" printClose
+            , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             ]
         ]
