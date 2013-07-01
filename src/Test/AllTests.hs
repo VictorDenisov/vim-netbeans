@@ -119,6 +119,12 @@ printSaveDone = "0:saveDone!1"
                 @=?
                 (N.printMessage $ N.CommandMessage 0 1 N.SaveDone)
 
+printSetBufferNumber :: Assertion
+printSetBufferNumber = "0:setBufferNumber!1 \"path\""
+                     @=?
+                     (N.printMessage $ N.CommandMessage 0 1
+                                                    $ N.SetBufferNumber "path")
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?

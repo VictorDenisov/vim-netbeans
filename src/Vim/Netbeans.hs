@@ -137,6 +137,8 @@ data Command = AddAnno
                 Int -- serNum
              | Save
              | SaveDone
+             | SetBufferNumber
+                String -- path
              | SetReadOnly
                deriving (Eq, Show)
 
@@ -254,6 +256,7 @@ printCommandName RemoveAnno {} = "removeAnno"
 printCommandName Save {} = "save"
 printCommandName SaveDone {} = "saveDone"
 printCommandName SetReadOnly {} = "setReadOnly"
+printCommandName SetBufferNumber {} = "setBufferNumber"
 
 printCommandArgs :: Command -> String
 printCommandArgs Create = ""
@@ -280,6 +283,8 @@ printCommandArgs (RemoveAnno serNum) =
        " " ++ (show serNum)
 printCommandArgs Save = ""
 printCommandArgs SaveDone = ""
+printCommandArgs (SetBufferNumber path) =
+       " " ++ (show path)
 printCommandArgs (DefineAnnoType typeNum typeName tooltip glyphFile fg bg) =
     " " ++ (show typeNum)
     ++ " \"" ++ typeName ++ "\""
