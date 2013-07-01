@@ -255,8 +255,8 @@ printCommandName Raise {} = "raise"
 printCommandName RemoveAnno {} = "removeAnno"
 printCommandName Save {} = "save"
 printCommandName SaveDone {} = "saveDone"
-printCommandName SetReadOnly {} = "setReadOnly"
 printCommandName SetBufferNumber {} = "setBufferNumber"
+printCommandName SetReadOnly {} = "setReadOnly"
 
 printCommandArgs :: Command -> String
 printCommandArgs Create = ""

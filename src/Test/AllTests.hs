@@ -41,6 +41,16 @@ parseErrorMessage = (Right $ N.E463)
                     @=?
                     (N.parseMessage "E463")
 
+printDisconnectMessage :: Assertion
+printDisconnectMessage = "DISCONNECT\n"
+                         @=?
+                         (N.printMessage $ N.DisconnectCommand)
+
+printDetachMessage :: Assertion
+printDetachMessage = "DETACH\n"
+                     @=?
+                     (N.printMessage $ N.Detach)
+
 printAddAnno :: Assertion
 printAddAnno = "0:addAnno!1 2 3 10 5"
                @=?
@@ -124,16 +134,6 @@ printSetBufferNumber = "0:setBufferNumber!1 \"path\""
                      @=?
                      (N.printMessage $ N.CommandMessage 0 1
                                                     $ N.SetBufferNumber "path")
-
-printDisconnectMessage :: Assertion
-printDisconnectMessage = "DISCONNECT\n"
-                         @=?
-                         (N.printMessage $ N.DisconnectCommand)
-
-printDetachMessage :: Assertion
-printDetachMessage = "DETACH\n"
-                     @=?
-                     (N.printMessage $ N.Detach)
 
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
