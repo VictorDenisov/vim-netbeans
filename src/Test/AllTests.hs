@@ -181,3 +181,8 @@ printSpecialKeys :: Assertion
 printSpecialKeys = "0:specialKeys!1"
                    @=?
                    (N.printMessage $ N.CommandMessage 0 1 N.SpecialKeys)
+
+printStartAtomic :: Assertion
+printStartAtomic = "0:startAtomic!1"
+                   @=?
+                   (N.printMessage $ N.CommandMessage 0 1 N.StartAtomic)

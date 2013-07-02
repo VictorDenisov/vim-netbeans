@@ -155,6 +155,7 @@ data Command = AddAnno
              | ShowBalloon
                 String -- text
              | SpecialKeys
+             | StartAtomic
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -280,6 +281,7 @@ printCommandName SetTitle {} = "setTitle"
 printCommandName SetVisible {} = "setVisible"
 printCommandName ShowBalloon {} = "showBalloon"
 printCommandName SpecialKeys {} = "specialKeys"
+printCommandName StartAtomic {} = "startAtomic"
 
 printCommandArgs :: Command -> String
 printCommandArgs (AddAnno serNum typeNum off len) =
@@ -331,3 +333,4 @@ printCommandArgs (SetVisible visible) =
 printCommandArgs (ShowBalloon text) =
        " " ++ (show text)
 printCommandArgs SpecialKeys = ""
+printCommandArgs StartAtomic = ""

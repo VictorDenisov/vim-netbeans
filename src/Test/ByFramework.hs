@@ -44,5 +44,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printSetVisible" printSetVisible
             , testCase "printShowBalloon" printShowBalloon
             , testCase "printSpecialKeys" printSpecialKeys
+            , testCase "printStartAtomic" printStartAtomic
             ]
         ]
