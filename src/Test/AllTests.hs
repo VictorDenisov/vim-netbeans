@@ -196,3 +196,8 @@ printStopDocumentListen :: Assertion
 printStopDocumentListen = "0:stopDocumentListen!1"
                           @=?
                           (N.printMessage $ N.CommandMessage 0 1 N.StopDocumentListen)
+
+printUnguard :: Assertion
+printUnguard = "0:unguard!1 10 14"
+               @=?
+               (N.printMessage $ N.CommandMessage 0 1 $ N.Unguard 10 14)

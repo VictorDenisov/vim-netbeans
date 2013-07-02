@@ -47,5 +47,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printStartAtomic" printStartAtomic
             , testCase "printStartDocumentListen" printStartDocumentListen
             , testCase "printStopDocumentListen" printStopDocumentListen
+            , testCase "printUnguard" printUnguard
             ]
         ]
