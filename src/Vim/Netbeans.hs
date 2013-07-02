@@ -61,6 +61,7 @@ data Reply = Reply
 data Function = GetCursor
               | GetLength
               | GetAnno Int -- serNum
+              | GetModified
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -357,9 +358,11 @@ printFunctionName :: Function -> String
 printFunctionName GetCursor = "getCursor"
 printFunctionName GetLength = "getLength"
 printFunctionName GetAnno {} = "getAnno"
+printFunctionName GetModified {} = "getModified"
 
 printFunctionArgs :: Function -> String
 printFunctionArgs GetCursor = ""
 printFunctionArgs GetLength = ""
 printFunctionArgs (GetAnno serNum) =
        " " ++ (show serNum)
+printFunctionArgs GetModified = ""

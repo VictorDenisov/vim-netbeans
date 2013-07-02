@@ -216,3 +216,8 @@ printGetAnno :: Assertion
 printGetAnno = "0:getAnno/1 10"
                  @=?
                  (N.printMessage $ N.FunctionMessage 0 1 $ N.GetAnno 10)
+
+printGetModified :: Assertion
+printGetModified = "0:getModified/1"
+                   @=?
+                   (N.printMessage $ N.FunctionMessage 0 1 $ N.GetModified)
