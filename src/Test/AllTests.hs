@@ -231,3 +231,8 @@ printInsert :: Assertion
 printInsert = "0:insert/1 10 \"hello\""
                @=?
                (N.printMessage $ N.FunctionMessage 0 1 $ N.Insert 10 "hello")
+
+printRemove :: Assertion
+printRemove = "0:remove/1 10 12"
+              @=?
+              (N.printMessage $ N.FunctionMessage 0 1 $ N.Remove 10 12)

@@ -66,6 +66,9 @@ data Function = GetCursor
               | Insert
                     Int -- off
                     String -- text
+              | Remove
+                    Int -- off
+                    Int -- len
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -365,6 +368,7 @@ printFunctionName GetAnno {} = "getAnno"
 printFunctionName GetModified {} = "getModified"
 printFunctionName GetText {} = "getText"
 printFunctionName Insert {} = "insert"
+printFunctionName Remove {} = "remove"
 
 printFunctionArgs :: Function -> String
 printFunctionArgs GetCursor = ""
@@ -376,3 +380,6 @@ printFunctionArgs GetText = ""
 printFunctionArgs (Insert off text) =
        " " ++ (show off)
     ++ " " ++ (show text)
+printFunctionArgs (Remove off len) =
+       " " ++ (show off)
+    ++ " " ++ (show len)
