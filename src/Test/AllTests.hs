@@ -166,3 +166,8 @@ printSetTitle :: Assertion
 printSetTitle = "0:setTitle!1 \"title\""
                 @=?
                 (N.printMessage $ N.CommandMessage 0 1 $ N.SetTitle "title")
+
+printSetVisible :: Assertion
+printSetVisible = "0:setVisible!1 T"
+                @=?
+                (N.printMessage $ N.CommandMessage 0 1 $ N.SetVisible True)

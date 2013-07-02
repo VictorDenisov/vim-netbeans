@@ -150,6 +150,8 @@ data Command = AddAnno
              | SetReadOnly
              | SetTitle
                 String -- title
+             | SetVisible
+                Bool -- visible
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -272,6 +274,7 @@ printCommandName SetFullName {} = "setFullName"
 printCommandName SetModified {} = "setModified"
 printCommandName SetReadOnly {} = "setReadOnly"
 printCommandName SetTitle {} = "setTitle"
+printCommandName SetVisible {} = "setVisible"
 
 printCommandArgs :: Command -> String
 printCommandArgs (AddAnno serNum typeNum off len) =
@@ -318,3 +321,5 @@ printCommandArgs (SetModified modified) =
 printCommandArgs SetReadOnly = ""
 printCommandArgs (SetTitle title) =
        " " ++ (show title)
+printCommandArgs (SetVisible visible) =
+       " " ++ (printBool visible)
