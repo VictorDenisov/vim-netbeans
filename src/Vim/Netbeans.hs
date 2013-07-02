@@ -179,12 +179,26 @@ parseNumber = read <$> many1 digit
 
 messageParser :: CharParser st VimMessage
 messageParser = try authParser
-            <|> try versionParser
-            <|> try startupDoneParser
-            <|> try fileOpenedParser
-            <|> try newDotAndMarkParser
-            <|> try keyCommandParser
-            <|> parseError
+            <|> try parseError
+            <|> try regularMessageParser
+
+regularMessageParser :: CharParser st VimMessage
+regularMessageParser = do
+    num <- parseNumber
+    c <- oneOf ": "
+    case c of
+        ' ' -> replyParser
+        ':' -> eventParser num
+
+replyParser :: CharParser st VimMessage
+replyParser = undefined
+
+eventParser :: Int -> CharParser st VimMessage
+eventParser bufId = try (versionParser bufId)
+                <|> try (startupDoneParser bufId)
+                <|> try (fileOpenedParser bufId)
+                <|> try (newDotAndMarkParser bufId)
+                <|> try (keyCommandParser bufId)
 
 parseError :: CharParser st VimMessage
 parseError = do
@@ -204,27 +218,24 @@ authParser = do
     s <- many1 anyChar
     return $ Auth s
 
-versionParser :: CharParser st VimMessage
-versionParser = do
-    bufId <- parseNumber
-    string ":version="
+versionParser :: Int -> CharParser st VimMessage
+versionParser bufId = do
+    string "version="
     seqN <- parseNumber
     string " \""
     ver <- many1 (oneOf "0123456789.")
     char '\"'
     return $ EventMessage bufId seqN $ Version ver
 
-startupDoneParser :: CharParser st VimMessage
-startupDoneParser = do
-    bufId <- parseNumber
-    string ":startupDone="
+startupDoneParser :: Int -> CharParser st VimMessage
+startupDoneParser bufId = do
+    string "startupDone="
     seqN <- parseNumber
     return $ EventMessage bufId seqN $ StartupDone
 
-fileOpenedParser :: CharParser st VimMessage
-fileOpenedParser = do
-    bufId <- parseNumber
-    string ":fileOpened="
+fileOpenedParser :: Int -> CharParser st VimMessage
+fileOpenedParser bufId = do
+    string "fileOpened="
     seqN <- parseNumber
     string " \""
     path <- many1 $ noneOf "\""
@@ -234,19 +245,17 @@ fileOpenedParser = do
     modified <- oneOf "TF"
     return $ EventMessage bufId seqN $ FileOpened path (open == 'T') (modified == 'T')
 
-keyCommandParser :: CharParser st VimMessage
-keyCommandParser = do
-    bufId <- parseNumber
-    string ":keyCommand="
+keyCommandParser :: Int -> CharParser st VimMessage
+keyCommandParser bufId = do
+    string "keyCommand="
     seqN <- parseNumber
     string " \""
     key <- many1 $ noneOf "\""
     return $ EventMessage bufId seqN $ KeyCommand key
 
-newDotAndMarkParser :: CharParser st VimMessage
-newDotAndMarkParser = do
-    bufId <- parseNumber
-    string ":newDotAndMark="
+newDotAndMarkParser :: Int -> CharParser st VimMessage
+newDotAndMarkParser bufId = do
+    string "newDotAndMark="
     seqNo <- parseNumber
     char ' '
     off1 <- parseNumber
