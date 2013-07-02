@@ -211,3 +211,8 @@ printGetLength :: Assertion
 printGetLength = "0:getLength/1"
                  @=?
                  (N.printMessage $ N.FunctionMessage 0 1 $ N.GetLength)
+
+printGetAnno :: Assertion
+printGetAnno = "0:getAnno/1 10"
+                 @=?
+                 (N.printMessage $ N.FunctionMessage 0 1 $ N.GetAnno 10)

@@ -60,6 +60,7 @@ data Reply = Reply
              deriving (Eq, Show)
 data Function = GetCursor
               | GetLength
+              | GetAnno Int -- serNum
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -355,7 +356,10 @@ printCommandArgs (Unguard off len) =
 printFunctionName :: Function -> String
 printFunctionName GetCursor = "getCursor"
 printFunctionName GetLength = "getLength"
+printFunctionName GetAnno {} = "getAnno"
 
 printFunctionArgs :: Function -> String
 printFunctionArgs GetCursor = ""
 printFunctionArgs GetLength = ""
+printFunctionArgs (GetAnno serNum) =
+       " " ++ (show serNum)
