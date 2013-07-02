@@ -54,5 +54,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printGetLength" printGetLength
             , testCase "printGetAnno" printGetAnno
             , testCase "printGetModified" printGetModified
+            , testCase "printGetText" printGetText
             ]
         ]

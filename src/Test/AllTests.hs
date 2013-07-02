@@ -221,3 +221,8 @@ printGetModified :: Assertion
 printGetModified = "0:getModified/1"
                    @=?
                    (N.printMessage $ N.FunctionMessage 0 1 $ N.GetModified)
+
+printGetText :: Assertion
+printGetText = "0:getText/1"
+               @=?
+               (N.printMessage $ N.FunctionMessage 0 1 $ N.GetText)
