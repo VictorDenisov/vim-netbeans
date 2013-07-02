@@ -151,6 +151,12 @@ printSetFullName = "0:setFullName!1 \"fullName\""
                     (N.printMessage $ N.CommandMessage 0 1
                                                     $ N.SetFullName "fullName")
 
+printSetModified :: Assertion
+printSetModified = "0:setModified!1 T"
+                    @=?
+                    (N.printMessage $ N.CommandMessage 0 1
+                                                    $ N.SetModified True)
+
 printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?
