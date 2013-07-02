@@ -161,3 +161,8 @@ printSetReadOnlyMessage :: Assertion
 printSetReadOnlyMessage = "0:setReadOnly!1"
                           @=?
                           (N.printMessage $ N.CommandMessage 0 1 N.SetReadOnly)
+
+printSetTitle :: Assertion
+printSetTitle = "0:setTitle!1 \"title\""
+                @=?
+                (N.printMessage $ N.CommandMessage 0 1 $ N.SetTitle "title")

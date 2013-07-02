@@ -40,5 +40,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printSetFullName" printSetFullName
             , testCase "printSetModified" printSetModified
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
+            , testCase "printSetTitle" printSetTitle
             ]
         ]

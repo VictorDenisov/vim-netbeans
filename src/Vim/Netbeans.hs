@@ -148,6 +148,8 @@ data Command = AddAnno
              | SetModified
                 Bool -- modified
              | SetReadOnly
+             | SetTitle
+                String -- title
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -269,6 +271,7 @@ printCommandName SetExitDelay {} = "setExitDelay"
 printCommandName SetFullName {} = "setFullName"
 printCommandName SetModified {} = "setModified"
 printCommandName SetReadOnly {} = "setReadOnly"
+printCommandName SetTitle {} = "setTitle"
 
 printCommandArgs :: Command -> String
 printCommandArgs (AddAnno serNum typeNum off len) =
@@ -313,3 +316,5 @@ printCommandArgs (SetFullName fullName) =
 printCommandArgs (SetModified modified) =
        " " ++ (printBool modified)
 printCommandArgs SetReadOnly = ""
+printCommandArgs (SetTitle title) =
+       " " ++ (show title)
