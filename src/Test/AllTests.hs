@@ -176,3 +176,8 @@ printShowBalloon :: Assertion
 printShowBalloon = "0:showBalloon!1 \"text\""
                 @=?
                 (N.printMessage $ N.CommandMessage 0 1 $ N.ShowBalloon "text")
+
+printSpecialKeys :: Assertion
+printSpecialKeys = "0:specialKeys!1"
+                   @=?
+                   (N.printMessage $ N.CommandMessage 0 1 N.SpecialKeys)
