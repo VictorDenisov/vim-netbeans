@@ -57,5 +57,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printGetText" printGetText
             , testCase "printInsert" printInsert
             , testCase "printRemove" printRemove
+            , testCase "printSaveAndExit" printSaveAndExit
             ]
         ]

@@ -236,3 +236,8 @@ printRemove :: Assertion
 printRemove = "0:remove/1 10 12"
               @=?
               (N.printMessage $ N.FunctionMessage 0 1 $ N.Remove 10 12)
+
+printSaveAndExit :: Assertion
+printSaveAndExit = "0:saveAndExit/1"
+              @=?
+              (N.printMessage $ N.FunctionMessage 0 1 $ N.SaveAndExit)

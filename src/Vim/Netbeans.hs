@@ -69,6 +69,7 @@ data Function = GetCursor
               | Remove
                     Int -- off
                     Int -- len
+              | SaveAndExit
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -369,6 +370,7 @@ printFunctionName GetModified {} = "getModified"
 printFunctionName GetText {} = "getText"
 printFunctionName Insert {} = "insert"
 printFunctionName Remove {} = "remove"
+printFunctionName SaveAndExit {} = "saveAndExit"
 
 printFunctionArgs :: Function -> String
 printFunctionArgs GetCursor = ""
@@ -383,3 +385,4 @@ printFunctionArgs (Insert off text) =
 printFunctionArgs (Remove off len) =
        " " ++ (show off)
     ++ " " ++ (show len)
+printFunctionArgs SaveAndExit = ""
