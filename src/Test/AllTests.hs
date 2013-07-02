@@ -226,3 +226,8 @@ printGetText :: Assertion
 printGetText = "0:getText/1"
                @=?
                (N.printMessage $ N.FunctionMessage 0 1 $ N.GetText)
+
+printInsert :: Assertion
+printInsert = "0:insert/1 10 \"hello\""
+               @=?
+               (N.printMessage $ N.FunctionMessage 0 1 $ N.Insert 10 "hello")
