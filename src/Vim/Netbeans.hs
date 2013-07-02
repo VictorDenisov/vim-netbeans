@@ -157,6 +157,7 @@ data Command = AddAnno
              | SpecialKeys
              | StartAtomic
              | StartDocumentListen
+             | StopDocumentListen
                deriving (Eq, Show)
 
 parseNumber :: CharParser st Int
@@ -284,6 +285,7 @@ printCommandName ShowBalloon {} = "showBalloon"
 printCommandName SpecialKeys {} = "specialKeys"
 printCommandName StartAtomic {} = "startAtomic"
 printCommandName StartDocumentListen {} = "startDocumentListen"
+printCommandName StopDocumentListen {} = "stopDocumentListen"
 
 printCommandArgs :: Command -> String
 printCommandArgs (AddAnno serNum typeNum off len) =
@@ -337,3 +339,4 @@ printCommandArgs (ShowBalloon text) =
 printCommandArgs SpecialKeys = ""
 printCommandArgs StartAtomic = ""
 printCommandArgs StartDocumentListen = ""
+printCommandArgs StopDocumentListen = ""

@@ -191,3 +191,8 @@ printStartDocumentListen :: Assertion
 printStartDocumentListen = "0:startDocumentListen!1"
                            @=?
                            (N.printMessage $ N.CommandMessage 0 1 N.StartDocumentListen)
+
+printStopDocumentListen :: Assertion
+printStopDocumentListen = "0:stopDocumentListen!1"
+                          @=?
+                          (N.printMessage $ N.CommandMessage 0 1 N.StopDocumentListen)
