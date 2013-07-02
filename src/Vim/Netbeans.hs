@@ -51,14 +51,14 @@ data VimMessage = EventMessage Int Int Event -- buf seqNo event
                   deriving (Eq, Show)
 
 data IdeMessage = CommandMessage Int Int Command -- buf seqNo command
-                | FunctionMessage Function
+                | FunctionMessage Int Int Function -- buf seqNo function
                 | Detach
                 | DisconnectCommand
                   deriving (Eq, Show)
 
 data Reply = Reply
              deriving (Eq, Show)
-data Function = Function
+data Function = GetCursor
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -254,6 +254,9 @@ printMessage Detach = "DETACH\n"
 printMessage (CommandMessage bufId seqNo command) =
     (show bufId) ++ ":" ++ (printCommandName command) ++ "!" ++ (show seqNo)
     ++ (printCommandArgs command)
+printMessage (FunctionMessage bufId seqNo function) =
+    (show bufId) ++ ":" ++ (printFunctionName function) ++ "/" ++ (show seqNo)
+    ++ (printFunctionArgs function)
 
 printBool :: Bool -> String
 printBool b = case b of
@@ -347,3 +350,9 @@ printCommandArgs StopDocumentListen = ""
 printCommandArgs (Unguard off len) =
        " " ++ (show off)
     ++ " " ++ (show len)
+
+printFunctionName :: Function -> String
+printFunctionName GetCursor = "getCursor"
+
+printFunctionArgs :: Function -> String
+printFunctionArgs GetCursor = ""

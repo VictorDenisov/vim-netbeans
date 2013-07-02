@@ -201,3 +201,8 @@ printUnguard :: Assertion
 printUnguard = "0:unguard!1 10 14"
                @=?
                (N.printMessage $ N.CommandMessage 0 1 $ N.Unguard 10 14)
+
+printGetCursor :: Assertion
+printGetCursor = "0:getCursor/1"
+                 @=?
+                 (N.printMessage $ N.FunctionMessage 0 1 $ N.GetCursor)

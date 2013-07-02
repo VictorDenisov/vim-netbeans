@@ -16,7 +16,7 @@ tests = [ testGroup "parseMessage"
             , testCase "parseStartupDoneMessage" parseStartupDoneMessage
             , testCase "parseErrorMessage" parseErrorMessage
             ]
-        , testGroup "printMessage"
+        , testGroup "printCommand"
             [ testCase "printDisconnectMessage" printDisconnectMessage
             , testCase "printDetachMessage" printDetachMessage
             , testCase "printAddAnno" printAddAnno
@@ -48,5 +48,8 @@ tests = [ testGroup "parseMessage"
             , testCase "printStartDocumentListen" printStartDocumentListen
             , testCase "printStopDocumentListen" printStopDocumentListen
             , testCase "printUnguard" printUnguard
+            ]
+        , testGroup "printFunction"
+            [ testCase "printGetCursor" printGetCursor
             ]
         ]
