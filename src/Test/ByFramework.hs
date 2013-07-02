@@ -45,5 +45,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printShowBalloon" printShowBalloon
             , testCase "printSpecialKeys" printSpecialKeys
             , testCase "printStartAtomic" printStartAtomic
+            , testCase "printStartDocumentListen" printStartDocumentListen
             ]
         ]

@@ -186,3 +186,8 @@ printStartAtomic :: Assertion
 printStartAtomic = "0:startAtomic!1"
                    @=?
                    (N.printMessage $ N.CommandMessage 0 1 N.StartAtomic)
+
+printStartDocumentListen :: Assertion
+printStartDocumentListen = "0:startDocumentListen!1"
+                           @=?
+                           (N.printMessage $ N.CommandMessage 0 1 N.StartDocumentListen)
