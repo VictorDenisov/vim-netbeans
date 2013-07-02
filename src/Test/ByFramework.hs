@@ -42,5 +42,6 @@ tests = [ testGroup "parseMessage"
             , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
             , testCase "printSetTitle" printSetTitle
             , testCase "printSetVisible" printSetVisible
+            , testCase "printShowBalloon" printShowBalloon
             ]
         ]

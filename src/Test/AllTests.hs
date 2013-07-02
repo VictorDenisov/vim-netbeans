@@ -171,3 +171,8 @@ printSetVisible :: Assertion
 printSetVisible = "0:setVisible!1 T"
                 @=?
                 (N.printMessage $ N.CommandMessage 0 1 $ N.SetVisible True)
+
+printShowBalloon :: Assertion
+printShowBalloon = "0:showBalloon!1 \"text\""
+                @=?
+                (N.printMessage $ N.CommandMessage 0 1 $ N.ShowBalloon "text")
