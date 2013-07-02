@@ -206,3 +206,8 @@ printGetCursor :: Assertion
 printGetCursor = "0:getCursor/1"
                  @=?
                  (N.printMessage $ N.FunctionMessage 0 1 $ N.GetCursor)
+
+printGetLength :: Assertion
+printGetLength = "0:getLength/1"
+                 @=?
+                 (N.printMessage $ N.FunctionMessage 0 1 $ N.GetLength)

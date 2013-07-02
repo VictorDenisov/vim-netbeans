@@ -51,5 +51,6 @@ tests = [ testGroup "parseMessage"
             ]
         , testGroup "printFunction"
             [ testCase "printGetCursor" printGetCursor
+            , testCase "printGetLength" printGetLength
             ]
         ]

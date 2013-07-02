@@ -59,6 +59,7 @@ data IdeMessage = CommandMessage Int Int Command -- buf seqNo command
 data Reply = Reply
              deriving (Eq, Show)
 data Function = GetCursor
+              | GetLength
                 deriving (Eq, Show)
 
 data Event = FileOpened
@@ -353,6 +354,8 @@ printCommandArgs (Unguard off len) =
 
 printFunctionName :: Function -> String
 printFunctionName GetCursor = "getCursor"
+printFunctionName GetLength = "getLength"
 
 printFunctionArgs :: Function -> String
 printFunctionArgs GetCursor = ""
+printFunctionArgs GetLength = ""
