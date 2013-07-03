@@ -40,7 +40,7 @@ initialConnState :: Handle -> ConnState
 initialConnState h = ConnState 0 h Nothing
 
 data VimMessage = EventMessage Int Int Event -- buf seqNo event
-                | ReplyMessage Reply
+                | ReplyMessage Int Reply -- seqNo
                 | Auth String
                 | E463
                 | E532
@@ -56,8 +56,13 @@ data IdeMessage = CommandMessage Int Int Command -- buf seqNo command
                 | DisconnectCommand
                   deriving (Eq, Show)
 
-data Reply = Reply
+data Reply = GetCursorReply
+                Int -- bufId
+                Int -- lnum
+                Int -- col
+                Int -- off
              deriving (Eq, Show)
+
 data Function = GetCursor
               | GetLength
               | GetAnno Int -- serNum
@@ -187,11 +192,22 @@ regularMessageParser = do
     num <- parseNumber
     c <- oneOf ": "
     case c of
-        ' ' -> replyParser
+        ' ' -> replyParser num
         ':' -> eventParser num
 
-replyParser :: CharParser st VimMessage
-replyParser = undefined
+replyParser :: Int -> CharParser st VimMessage
+replyParser = getCursorReplyParser
+
+getCursorReplyParser :: Int -> CharParser st VimMessage
+getCursorReplyParser seqno = do
+    bufId <- parseNumber
+    char ' '
+    lnum <- parseNumber
+    char ' '
+    col <- parseNumber
+    char ' '
+    off <- parseNumber
+    return $ ReplyMessage seqno $ GetCursorReply bufId lnum col off
 
 eventParser :: Int -> CharParser st VimMessage
 eventParser bufId = try (versionParser bufId)
