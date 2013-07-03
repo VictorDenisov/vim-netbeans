@@ -198,11 +198,12 @@ regularMessageParser = do
         ':' -> eventParser num
 
 replyParser :: Int -> CharParser st VimMessage
-replyParser seqno = try (getCursorReplyParser seqno)
-                <|> try (getLengthReplyParser seqno)
+replyParser seqno = do
+    reply <- try getCursorReplyParser <|> try getLengthReplyParser
+    return $ ReplyMessage seqno reply
 
-getCursorReplyParser :: Int -> CharParser st VimMessage
-getCursorReplyParser seqno = do
+getCursorReplyParser :: CharParser st Reply
+getCursorReplyParser = do
     bufId <- parseNumber
     char ' '
     lnum <- parseNumber
@@ -210,12 +211,12 @@ getCursorReplyParser seqno = do
     col <- parseNumber
     char ' '
     off <- parseNumber
-    return $ ReplyMessage seqno $ GetCursorReply bufId lnum col off
+    return $ GetCursorReply bufId lnum col off
 
-getLengthReplyParser :: Int -> CharParser st VimMessage
-getLengthReplyParser seqno = do
+getLengthReplyParser :: CharParser st Reply
+getLengthReplyParser = do
     len <- parseNumber
-    return $ ReplyMessage seqno $ GetLengthReply len
+    return $ GetLengthReply len
 
 eventParser :: Int -> CharParser st VimMessage
 eventParser bufId = try (versionParser bufId)
