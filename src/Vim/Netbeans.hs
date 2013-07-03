@@ -61,6 +61,8 @@ data Reply = GetCursorReply
                 Int -- lnum
                 Int -- col
                 Int -- off
+           | GetLengthReply
+                Int -- len
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -196,7 +198,8 @@ regularMessageParser = do
         ':' -> eventParser num
 
 replyParser :: Int -> CharParser st VimMessage
-replyParser = getCursorReplyParser
+replyParser seqno = try (getCursorReplyParser seqno)
+                <|> try (getLengthReplyParser seqno)
 
 getCursorReplyParser :: Int -> CharParser st VimMessage
 getCursorReplyParser seqno = do
@@ -208,6 +211,11 @@ getCursorReplyParser seqno = do
     char ' '
     off <- parseNumber
     return $ ReplyMessage seqno $ GetCursorReply bufId lnum col off
+
+getLengthReplyParser :: Int -> CharParser st VimMessage
+getLengthReplyParser seqno = do
+    len <- parseNumber
+    return $ ReplyMessage seqno $ GetLengthReply len
 
 eventParser :: Int -> CharParser st VimMessage
 eventParser bufId = try (versionParser bufId)

@@ -18,6 +18,7 @@ tests = [ testGroup "parseMessage"
             ]
         , testGroup "printCommand"
             [ testCase "parseGetCursorReply" parseGetCursorReply
+            , testCase "parseGetLengthReply" parseGetLengthReply
             ]
         , testGroup "printCommand"
             [ testCase "printDisconnectMessage" printDisconnectMessage

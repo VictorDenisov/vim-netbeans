@@ -46,6 +46,11 @@ parseGetCursorReply = (Right $ N.ReplyMessage 0 $ N.GetCursorReply 1 2 3 4)
                       @=?
                       (N.parseMessage "0 1 2 3 4")
 
+parseGetLengthReply :: Assertion
+parseGetLengthReply = (Right $ N.ReplyMessage 1 $ N.GetLengthReply 2)
+                      @=?
+                      (N.parseMessage "1 2")
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
