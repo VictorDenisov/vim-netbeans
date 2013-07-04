@@ -9,6 +9,7 @@ import System.IO (hGetLine)
 import Control.Monad.Error (ErrorT, runErrorT, MonadError(..), Error(..))
 import Control.Monad.IO.Class (MonadIO)
 import Control.Applicative ((<$>))
+
 import Data.List (isPrefixOf)
 import Data.Maybe (fromJust)
 import Text.ParserCombinators.Parsec
@@ -182,17 +183,17 @@ data Command = AddAnno
                 Int -- len
                deriving (Eq, Show)
 
-type ParserMap st = [(Int, CharParser st Reply)]
+type ParserMap = [(Int, Parser Reply)]
 
-parseNumber :: CharParser st Int
+parseNumber :: Parser Int
 parseNumber = read <$> many1 digit
 
-messageParser :: (ParserMap st) -> CharParser st VimMessage
+messageParser :: ParserMap -> Parser VimMessage
 messageParser parserMap = try authParser
                       <|> try parseError
                       <|> try (regularMessageParser parserMap)
 
-regularMessageParser :: (ParserMap st) -> CharParser st VimMessage
+regularMessageParser :: ParserMap -> Parser VimMessage
 regularMessageParser parserMap = do
     num <- parseNumber
     c <- oneOf ": "
@@ -200,13 +201,13 @@ regularMessageParser parserMap = do
         ' ' -> replyParser num parserMap
         ':' -> eventParser num
 
-replyParser :: Int -> (ParserMap st) -> CharParser st VimMessage
+replyParser :: Int -> ParserMap -> Parser VimMessage
 replyParser seqno parserMap = do
     let parser = fromJust $ lookup seqno parserMap
     reply <- parser
     return $ ReplyMessage seqno reply
 
-getCursorReplyParser :: CharParser st Reply
+getCursorReplyParser :: Parser Reply
 getCursorReplyParser = do
     bufId <- parseNumber
     char ' '
@@ -217,19 +218,19 @@ getCursorReplyParser = do
     off <- parseNumber
     return $ GetCursorReply bufId lnum col off
 
-getLengthReplyParser :: CharParser st Reply
+getLengthReplyParser :: Parser Reply
 getLengthReplyParser = do
     len <- parseNumber
     return $ GetLengthReply len
 
-eventParser :: Int -> CharParser st VimMessage
+eventParser :: Int -> Parser VimMessage
 eventParser bufId = try (versionParser bufId)
                 <|> try (startupDoneParser bufId)
                 <|> try (fileOpenedParser bufId)
                 <|> try (newDotAndMarkParser bufId)
                 <|> try (keyCommandParser bufId)
 
-parseError :: CharParser st VimMessage
+parseError :: Parser VimMessage
 parseError = do
     char 'E'
     s <- count 3 digit
@@ -241,13 +242,13 @@ parseError = do
         "658" -> return $ E658 -- Connection lost for this buffer
         "744" -> return $ E744 -- Read-only file
 
-authParser :: CharParser st VimMessage
+authParser :: Parser VimMessage
 authParser = do
     string "AUTH "
     s <- many1 anyChar
     return $ Auth s
 
-versionParser :: Int -> CharParser st VimMessage
+versionParser :: Int -> Parser VimMessage
 versionParser bufId = do
     string "version="
     seqN <- parseNumber
@@ -256,13 +257,13 @@ versionParser bufId = do
     char '\"'
     return $ EventMessage bufId seqN $ Version ver
 
-startupDoneParser :: Int -> CharParser st VimMessage
+startupDoneParser :: Int -> Parser VimMessage
 startupDoneParser bufId = do
     string "startupDone="
     seqN <- parseNumber
     return $ EventMessage bufId seqN $ StartupDone
 
-fileOpenedParser :: Int -> CharParser st VimMessage
+fileOpenedParser :: Int -> Parser VimMessage
 fileOpenedParser bufId = do
     string "fileOpened="
     seqN <- parseNumber
@@ -274,7 +275,7 @@ fileOpenedParser bufId = do
     modified <- oneOf "TF"
     return $ EventMessage bufId seqN $ FileOpened path (open == 'T') (modified == 'T')
 
-keyCommandParser :: Int -> CharParser st VimMessage
+keyCommandParser :: Int -> Parser VimMessage
 keyCommandParser bufId = do
     string "keyCommand="
     seqN <- parseNumber
@@ -282,7 +283,7 @@ keyCommandParser bufId = do
     key <- many1 $ noneOf "\""
     return $ EventMessage bufId seqN $ KeyCommand key
 
-newDotAndMarkParser :: Int -> CharParser st VimMessage
+newDotAndMarkParser :: Int -> Parser VimMessage
 newDotAndMarkParser bufId = do
     string "newDotAndMark="
     seqNo <- parseNumber
@@ -292,7 +293,7 @@ newDotAndMarkParser bufId = do
     off2 <- parseNumber
     return $ EventMessage bufId seqNo $ NewDotAndMark off1 off2
 
-parseMessage :: ParserMap () -> String -> Either String VimMessage
+parseMessage :: ParserMap -> String -> Either String VimMessage
 parseMessage parserMap m = case parse (messageParser parserMap) "(unknown)" m of
     Left parseError -> Left $ show parseError
     Right message -> Right message
