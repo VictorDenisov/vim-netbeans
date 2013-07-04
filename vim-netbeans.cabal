@@ -16,6 +16,7 @@ Executable framework-tests
         hs-source-dirs: src
         main-is:        Test/ByFramework.hs
         other-modules:  Vim.Netbeans
+                     ,  Vim.Netbeans.Protocol
         build-depends:  base >= 3 && <= 4.5.0.0
                      ,  HUnit
                      ,  test-framework
@@ -33,6 +34,7 @@ Executable Main
         hs-source-dirs: src
         main-is:        Test/Main.hs
         other-modules:  Vim.Netbeans
+                     ,  Vim.Netbeans.Protocol
         build-depends:  base >= 3 && <= 4.5.0.0
                      ,  transformers >= 0.3.0.0
                      ,  containers >= 0.4.2.1
@@ -46,6 +48,7 @@ Executable Main
 Library
         hs-source-dirs:         src
         exposed-modules:        Vim.Netbeans
+        other-modules:          Vim.Netbeans.Protocol
         build-depends:          base >= 3.0.3.1 && <= 4.5.0.0
                               , containers >= 0.4.2.1
                               , binary >= 0.5.1.0

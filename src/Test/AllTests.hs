@@ -3,7 +3,7 @@ where
 
 import Test.HUnit
 
-import qualified Vim.Netbeans as N
+import qualified Vim.Netbeans.Protocol as N
 
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.Auth "password")
