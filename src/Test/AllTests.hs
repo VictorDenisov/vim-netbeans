@@ -6,7 +6,7 @@ import Test.HUnit
 import qualified Vim.Netbeans.Protocol as N
 
 parseAuthMessage :: Assertion
-parseAuthMessage = (Right $ N.Auth "password")
+parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
                    (N.parseMessage [] "AUTH password")
 
@@ -37,7 +37,7 @@ parseStartupDoneMessage = (Right $ N.EventMessage 0 1 $ N.StartupDone)
                           (N.parseMessage [] "0:startupDone=1")
 
 parseErrorMessage :: Assertion
-parseErrorMessage = (Right $ N.E463)
+parseErrorMessage = (Right $ N.EventMessage (-1) (-1) $ N.E463)
                     @=?
                     (N.parseMessage [] "E463")
 
