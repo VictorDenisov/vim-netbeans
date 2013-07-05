@@ -50,6 +50,10 @@ runNetbeans port password vm = do
 preflight :: MonadIO m => Netbeans m ()
 preflight = do
     message <- nextEvent
+    (_, P.Version v) <- nextEvent
+    liftIO $ putStrLn $ show v
+    st <- get
+    put $ st { protVersion = Just v }
     liftIO $ putStrLn $ show message
 
 messageReader :: MVar P.ParserMap -> Handle -> Chan P.VimMessage -> IO ()
@@ -64,7 +68,7 @@ messageReader pm h q = forever $ do
             putMVar pm m1
     writeChan q msg
 
-nextEvent :: MonadIO m => Netbeans m (Int, P.Event)
+nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
     q <- messageQueue `liftM` get
     message <- liftIO $ readChan q
