@@ -86,8 +86,6 @@ takeReply q seqNo = do
 initialConnState :: Handle -> Chan P.VimMessage -> MVar P.ParserMap -> ConnState
 initialConnState h q pm = ConnState 1 h Nothing q pm
 
-type BufId = Int
-
 popCommandNumber :: Monad m => Netbeans m Int
 popCommandNumber = do
     st <- get
@@ -125,7 +123,7 @@ sendFunction bufId funcMsg parser = do
     reply <- takeReply mq seqNo
     return reply
 
-getLength :: MonadIO m => BufId -> Netbeans m Int
+getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
                                     bufId

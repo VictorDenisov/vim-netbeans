@@ -5,18 +5,18 @@ import Text.ParserCombinators.Parsec
 import Control.Applicative ((<$>))
 import Data.Maybe (fromJust)
 
-data VimMessage = EventMessage Int Int Event -- buf seqNo event
+data VimMessage = EventMessage BufId Int Event -- buf seqNo event
                 | ReplyMessage Int Reply -- seqNo
                   deriving (Eq, Show)
 
-data IdeMessage = CommandMessage Int Int Command -- buf seqNo command
-                | FunctionMessage Int Int Function -- buf seqNo function
+data IdeMessage = CommandMessage BufId Int Command -- buf seqNo command
+                | FunctionMessage BufId Int Function -- buf seqNo function
                 | Detach
                 | DisconnectCommand
                   deriving (Eq, Show)
 
 data Reply = GetCursorReply
-                Int -- bufId
+                BufId -- bufId
                 Int -- lnum
                 Int -- col
                 Int -- off
@@ -147,6 +147,8 @@ data Command = AddAnno
                 Int -- len
                deriving (Eq, Show)
 
+type BufId = Int
+
 type ParserMap = [(Int, Parser Reply)]
 
 parseNumber :: Parser Int
@@ -187,7 +189,7 @@ getLengthReplyParser = do
     len <- parseNumber
     return $ GetLengthReply len
 
-eventParser :: Int -> Parser VimMessage
+eventParser :: BufId -> Parser VimMessage
 eventParser bufId = try (versionParser bufId)
                 <|> try (startupDoneParser bufId)
                 <|> try (fileOpenedParser bufId)
@@ -212,7 +214,7 @@ authParser = do
     s <- many1 anyChar
     return $ EventMessage (-1) (-1) $ Auth s
 
-versionParser :: Int -> Parser VimMessage
+versionParser :: BufId -> Parser VimMessage
 versionParser bufId = do
     string "version="
     seqN <- parseNumber
@@ -221,13 +223,13 @@ versionParser bufId = do
     char '\"'
     return $ EventMessage bufId seqN $ Version ver
 
-startupDoneParser :: Int -> Parser VimMessage
+startupDoneParser :: BufId -> Parser VimMessage
 startupDoneParser bufId = do
     string "startupDone="
     seqN <- parseNumber
     return $ EventMessage bufId seqN $ StartupDone
 
-fileOpenedParser :: Int -> Parser VimMessage
+fileOpenedParser :: BufId -> Parser VimMessage
 fileOpenedParser bufId = do
     string "fileOpened="
     seqN <- parseNumber
@@ -239,7 +241,7 @@ fileOpenedParser bufId = do
     modified <- oneOf "TF"
     return $ EventMessage bufId seqN $ FileOpened path (open == 'T') (modified == 'T')
 
-keyCommandParser :: Int -> Parser VimMessage
+keyCommandParser :: BufId -> Parser VimMessage
 keyCommandParser bufId = do
     string "keyCommand="
     seqN <- parseNumber
@@ -247,7 +249,7 @@ keyCommandParser bufId = do
     key <- many1 $ noneOf "\""
     return $ EventMessage bufId seqN $ KeyCommand key
 
-newDotAndMarkParser :: Int -> Parser VimMessage
+newDotAndMarkParser :: BufId -> Parser VimMessage
 newDotAndMarkParser bufId = do
     string "newDotAndMark="
     seqNo <- parseNumber
