@@ -95,16 +95,40 @@ popCommandNumber = do
     put $ st { sequenceCounter = seqNo }
     return seqNo
 
-getLength :: MonadIO m => BufId -> Netbeans m Int
-getLength bufId = do
+sendCommand :: MonadIO m => Int -> P.Command -> Netbeans m ()
+sendCommand bufId cmdMsg = do
     seqNo <- popCommandNumber
+    h <- connHandle `liftM` get
+    let message = P.printMessage $ P.CommandMessage bufId seqNo cmdMsg
+    liftIO $ hPutStrLn h message
+    liftIO $ hFlush h
+
+sendFunction :: MonadIO m => Int
+                          -> P.Function
+                          -> Parser P.Reply
+                          -> Netbeans m P.Reply
+sendFunction bufId funcMsg parser = do
+    seqNo <- popCommandNumber
+
     h <- connHandle `liftM` get
     q <- messageQueue `liftM` get
     mq <- liftIO $ dupChan q
+
     pm <- parserMap `liftM` get
     m <- liftIO $ takeMVar pm
-    liftIO $ putMVar pm ((seqNo, P.getLengthReplyParser) : m)
-    liftIO $ hPutStrLn h $ P.printMessage $ P.FunctionMessage bufId seqNo P.GetLength
+
+    liftIO $ putMVar pm ((seqNo, parser) : m)
+    let message = P.printMessage $ P.FunctionMessage bufId seqNo funcMsg
+
+    liftIO $ hPutStrLn h message
     liftIO $ hFlush h
-    P.GetLengthReply value <- takeReply mq seqNo
+    reply <- takeReply mq seqNo
+    return reply
+
+getLength :: MonadIO m => BufId -> Netbeans m Int
+getLength bufId = do
+    P.GetLengthReply value <- sendFunction
+                                    bufId
+                                    P.GetLength
+                                    P.getLengthReplyParser
     return value
