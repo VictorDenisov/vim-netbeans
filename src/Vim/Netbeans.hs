@@ -55,7 +55,6 @@ preflight = do
 messageReader :: MVar P.ParserMap -> Handle -> Chan P.VimMessage -> IO ()
 messageReader pm h q = forever $ do
     line <- hGetLine h
-    putStrLn $ "Reading line: " ++ (show line)
     m <- takeMVar pm
     let Right msg = P.parseMessage m line -- TODO remove fromJust
     case msg of
@@ -63,7 +62,6 @@ messageReader pm h q = forever $ do
         P.ReplyMessage seqNo _ -> do
             let m1 = filter ((seqNo /=) . fst)  m
             putMVar pm m1
-    putStrLn $ "Reading message: " ++ (show msg)
     writeChan q msg
 
 nextEvent :: MonadIO m => Netbeans m (Int, P.Event)
