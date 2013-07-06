@@ -17,7 +17,7 @@ import Text.ParserCombinators.Parsec.Char
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.Chan (Chan, newChan, readChan, writeChan, dupChan)
-import Control.Concurrent.MVar (putMVar, takeMVar, MVar, newMVar)
+import Control.Concurrent.MVar (putMVar, takeMVar, MVar, newMVar, withMVar)
 import Control.Concurrent (forkIO)
 
 import qualified Vim.Netbeans.Protocol as P
@@ -25,8 +25,8 @@ import qualified Vim.Netbeans.Protocol as P
 type Netbeans = StateT ConnState
 
 data ConnState = ConnState
-    { sequenceCounter :: Int
-    , connHandle      :: Handle
+    { sequenceCounter :: MVar Int
+    , connHandle      :: MVar Handle
     , protVersion     :: Maybe String
     , messageQueue    :: Chan P.VimMessage
     , parserMap       :: MVar P.ParserMap
@@ -43,8 +43,15 @@ runNetbeans port password vm = do
     liftIO $ hSetBinaryMode handleC True
     pm <- liftIO $ newMVar []
     q <- liftIO $ newChan
+    seqCounter <- liftIO $ newMVar 1
+    hMVar <- liftIO $ newMVar handleC
     liftIO $ forkIO $ messageReader pm handleC q
-    runStateT (preflight >> vm) (initialConnState handleC q pm)
+    runStateT (preflight >> vm) (ConnState
+                                    seqCounter
+                                    hMVar
+                                    Nothing
+                                    q
+                                    pm)
     return ()
 
 preflight :: MonadIO m => Netbeans m ()
@@ -84,23 +91,22 @@ takeReply q seqNo = do
                                     then return reply
                                     else takeReply q seqNo
 
-initialConnState :: Handle -> Chan P.VimMessage -> MVar P.ParserMap -> ConnState
-initialConnState h q pm = ConnState 1 h Nothing q pm
-
-popCommandNumber :: Monad m => Netbeans m Int
+popCommandNumber :: MonadIO m => Netbeans m Int
 popCommandNumber = do
     st <- get
-    let seqNo = sequenceCounter st
-    put $ st { sequenceCounter = seqNo }
+    let seqNoMVar = sequenceCounter st
+    seqNo <- liftIO $ takeMVar seqNoMVar
+    liftIO $ putMVar seqNoMVar (seqNo + 1)
     return seqNo
 
 sendCommand :: MonadIO m => Int -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
     seqNo <- popCommandNumber
-    h <- connHandle `liftM` get
+    hMVar <- connHandle `liftM` get
     let message = P.printMessage $ P.CommandMessage bufId seqNo cmdMsg
-    liftIO $ hPutStrLn h message
-    liftIO $ hFlush h
+    liftIO $ withMVar hMVar $ \h -> do
+        hPutStrLn h message
+        hFlush h
 
 sendFunction :: MonadIO m => Int
                           -> P.Function
@@ -109,7 +115,7 @@ sendFunction :: MonadIO m => Int
 sendFunction bufId funcMsg parser = do
     seqNo <- popCommandNumber
 
-    h <- connHandle `liftM` get
+    hMVar <- connHandle `liftM` get
     q <- messageQueue `liftM` get
     mq <- liftIO $ dupChan q
 
@@ -119,8 +125,9 @@ sendFunction bufId funcMsg parser = do
     liftIO $ putMVar pm ((seqNo, parser) : m)
     let message = P.printMessage $ P.FunctionMessage bufId seqNo funcMsg
 
-    liftIO $ hPutStrLn h message
-    liftIO $ hFlush h
+    liftIO $ withMVar hMVar $ \h -> do
+        hPutStrLn h message
+        hFlush h
     reply <- takeReply mq seqNo
     return reply
 
