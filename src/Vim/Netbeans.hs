@@ -112,7 +112,7 @@ sendCommand bufId cmdMsg = do
         hPutStrLn h message
         hFlush h
 
-sendFunction :: MonadIO m => Int
+sendFunction :: MonadIO m => P.BufId
                           -> P.Function
                           -> Parser P.Reply
                           -> Netbeans m P.Reply
@@ -142,3 +142,11 @@ getLength bufId = do
                                     P.GetLength
                                     P.getLengthReplyParser
     return value
+
+getCursor :: MonadIO m => Netbeans m (P.BufId, Int, Int, Int)
+getCursor = do
+    P.GetCursorReply bufId lnum col off <- sendFunction
+                                                    0
+                                                    P.GetCursor
+                                                    P.getCursorReplyParser
+    return (bufId, lnum, col, off)
