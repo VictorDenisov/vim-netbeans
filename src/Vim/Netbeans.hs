@@ -6,12 +6,11 @@ import Control.Monad.Trans (liftIO, lift, MonadTrans)
 import Control.Monad (liftM, forever)
 import Control.Monad.State (StateT(..), MonadState(..), evalStateT)
 import Network (listenOn, accept, PortID)
-import System.IO (hGetLine, hPutStrLn)
+import System.IO (hGetLine, hPutStrLn, stderr)
 import Control.Monad.Error (ErrorT, runErrorT, MonadError(..), Error(..))
 import Control.Monad.IO.Class (MonadIO)
 
 import Data.List (isPrefixOf, find, delete)
-import Data.Maybe (fromJust)
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 
@@ -66,13 +65,18 @@ messageReader :: MVar P.ParserMap -> Handle -> Chan P.VimMessage -> IO ()
 messageReader pm h q = forever $ do
     line <- hGetLine h
     m <- takeMVar pm
-    let Right msg = P.parseMessage m line -- TODO remove fromJust
+    let msg = P.parseMessage m line
     case msg of
-        P.EventMessage _ _ _ -> putMVar pm m
-        P.ReplyMessage seqNo _ -> do
+        Left s -> do
+            putMVar pm m
+            liftIO $ hPutStrLn stderr $ "Failed to parse message: " ++ s
+        Right eventMsg@(P.EventMessage _ _ _) -> do
+            putMVar pm m
+            writeChan q eventMsg
+        Right funcMsg@(P.ReplyMessage seqNo _) -> do
             let m1 = filter ((seqNo /=) . fst)  m
             putMVar pm m1
-    writeChan q msg
+            writeChan q funcMsg
 
 nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
