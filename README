@@ -7,4 +7,5 @@ Last update: February 3, 2013
 DESCRIPTION
 -----------
 
-This is an implementation of the vim netbeans protocol.
+This is an implementation of the vim netbeans protocol
+<http://vimdoc.sourceforge.net/htmldoc/netbeans.html>.
