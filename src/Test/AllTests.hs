@@ -2,8 +2,19 @@ module Test.AllTests
 where
 
 import Test.HUnit
+import Text.ParserCombinators.Parsec (parse)
 
 import qualified Vim.Netbeans.Protocol as N
+
+parseNumber :: Assertion
+parseNumber = case parse N.parseNumber "(unknown)" "123" of
+                Right n -> n @=? 123
+                Left _ -> assertFailure "parsing failure"
+
+parseNumberNegative :: Assertion
+parseNumberNegative = case parse N.parseNumber "(unknown)" "-12" of
+                Right n -> n @=? (-12)
+                Left _ -> assertFailure "parsing failure"
 
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")

@@ -152,7 +152,12 @@ type BufId = Int
 type ParserMap = [(Int, Parser Reply)]
 
 parseNumber :: Parser Int
-parseNumber = read <$> many1 digit
+parseNumber = do
+    sign <- optionMaybe $ string "-"
+    v <- read <$> many1 digit
+    case sign of
+        Nothing -> return v
+        Just _ -> return (-v)
 
 messageParser :: ParserMap -> Parser VimMessage
 messageParser parserMap = try authParser

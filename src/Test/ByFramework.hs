@@ -7,7 +7,11 @@ import Test.HUnit
 
 main = defaultMain tests
 
-tests = [ testGroup "parseMessage"
+tests = [ testGroup "parseNumber"
+            [ testCase "parseNumber" parseNumber
+            , testCase "parseNumberNegative" parseNumberNegative
+            ]
+        , testGroup "parseMessage"
             [ testCase "parseAuthMessage" parseAuthMessage
             , testCase "parseFileOpenedMessage" parseFileOpenedMessage
             , testCase "parseVersionMessage" parseVersionMessage
