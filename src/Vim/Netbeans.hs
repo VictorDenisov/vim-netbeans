@@ -69,7 +69,7 @@ messageReader pm h q = forever $ do
     case msg of
         Left s -> do
             putMVar pm m
-            liftIO $ hPutStrLn stderr $ "Failed to parse message: " ++ s
+            hPutStrLn stderr $ "Failed to parse message: " ++ s
         Right eventMsg@(P.EventMessage _ _ _) -> do
             putMVar pm m
             writeChan q eventMsg
@@ -150,3 +150,11 @@ getCursor = do
                                                     P.GetCursor
                                                     P.getCursorReplyParser
     return (bufId, lnum, col, off)
+
+getAnno :: MonadIO m => P.BufId -> Int -> Netbeans m Int
+getAnno bufId serNum = do
+    P.GetAnnoReply lnum <- sendFunction
+                              bufId
+                              (P.GetAnno serNum)
+                              P.getAnnoReplyParser
+    return lnum
