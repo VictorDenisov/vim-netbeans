@@ -20,9 +20,10 @@ tests = [ testGroup "parseNumber"
             , testCase "parseStartupDoneMessage" parseStartupDoneMessage
             , testCase "parseErrorMessage" parseErrorMessage
             ]
-        , testGroup "printCommand"
+        , testGroup "parseReply"
             [ testCase "parseGetCursorReply" parseGetCursorReply
             , testCase "parseGetLengthReply" parseGetLengthReply
+            , testCase "parseGetAnnoReply" parseGetAnnoReply
             ]
         , testGroup "printCommand"
             [ testCase "printDisconnectMessage" printDisconnectMessage

@@ -22,6 +22,8 @@ data Reply = GetCursorReply
                 Int -- off
            | GetLengthReply
                 Int -- len
+           | GetAnnoReply
+                Int -- lnum
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -193,6 +195,11 @@ getLengthReplyParser :: Parser Reply
 getLengthReplyParser = do
     len <- parseNumber
     return $ GetLengthReply len
+
+getAnnoReplyParser :: Parser Reply
+getAnnoReplyParser = do
+    lnum <- parseNumber
+    return $ GetAnnoReply lnum
 
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = try (versionParser bufId)
