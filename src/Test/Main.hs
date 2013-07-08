@@ -1,12 +1,12 @@
 import Network.Socket.Internal (PortNumber(..))
-import Vim.Netbeans (runNetbeans, getLength, getCursor, getAnno)
+import Vim.Netbeans (runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent)
 import Control.Monad.Trans (liftIO)
 import Network
 
 main = runNetbeans (PortNumber 4444) "password" $ do
-    l <- getLength 0
-    x <- getCursor
-    y <- getAnno 0 1
+    b <- editFile "README"
+    l <- getLength b
+    liftIO $ putStrLn $ show b
     liftIO $ putStrLn $ show l
-    liftIO $ putStrLn $ show x
-    liftIO $ putStrLn $ show y
+    e <- nextEvent
+    liftIO $ putStrLn $ show e

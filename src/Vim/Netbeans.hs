@@ -26,6 +26,7 @@ type Netbeans = StateT ConnState
 data ConnState = ConnState
     { sequenceCounter :: MVar Int
     , connHandle      :: MVar Handle
+    , bufNumber       :: MVar Int
     , protVersion     :: Maybe String
     , messageQueue    :: Chan P.VimMessage
     , parserMap       :: MVar P.ParserMap
@@ -44,10 +45,12 @@ runNetbeans port password vm = do
     q <- liftIO $ newChan
     seqCounter <- liftIO $ newMVar 1
     hMVar <- liftIO $ newMVar handleC
+    bufMVar <- liftIO $ newMVar 1
     liftIO $ forkIO $ messageReader pm handleC q
     runStateT (preflight >> vm) (ConnState
                                     seqCounter
                                     hMVar
+                                    bufMVar
                                     Nothing
                                     q
                                     pm)
@@ -103,7 +106,15 @@ popCommandNumber = do
     liftIO $ putMVar seqNoMVar (seqNo + 1)
     return seqNo
 
-sendCommand :: MonadIO m => Int -> P.Command -> Netbeans m ()
+popBufferId :: MonadIO m => Netbeans m P.BufId
+popBufferId = do
+    st <- get
+    let bufNumberMVar = bufNumber st
+    bufNo <- liftIO $ takeMVar bufNumberMVar
+    liftIO $ putMVar bufNumberMVar (bufNo + 1)
+    return bufNo
+
+sendCommand :: MonadIO m => P.BufId -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
     seqNo <- popCommandNumber
     hMVar <- connHandle `liftM` get
@@ -134,6 +145,12 @@ sendFunction bufId funcMsg parser = do
         hFlush h
     reply <- takeReply mq seqNo
     return reply
+
+editFile :: MonadIO m => String -> Netbeans m P.BufId
+editFile path = do
+    bufId <- popBufferId
+    sendCommand bufId $ P.EditFile path
+    return bufId
 
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
