@@ -16,7 +16,7 @@ import Text.ParserCombinators.Parsec.Char
 
 import Control.Applicative ((<$>))
 import Control.Concurrent.STM.TChan (TChan, newTChan, readTChan, writeTChan,
-                                     dupTChan, isEmptyTChan)
+                                     dupTChan, isEmptyTChan, tryReadTChan)
 import Control.Monad.STM (atomically)
 import Control.Concurrent.MVar (putMVar, takeMVar, MVar, newMVar, withMVar)
 import Control.Concurrent (forkIO)
@@ -87,9 +87,19 @@ nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
     q <- messageQueue `liftM` get
     message <- liftIO $ atomically $ readTChan q
+    liftIO $ putStrLn $ "read message is " ++ (show message)
     case message of
         P.EventMessage bufId seqNo event -> return (bufId, event)
         P.ReplyMessage _ _ -> nextEvent
+
+tryNextEvent :: MonadIO m => Netbeans m (Maybe (P.BufId, P.Event))
+tryNextEvent = do
+    q <- messageQueue `liftM` get
+    message <- liftIO $ atomically $ tryReadTChan q
+    case message of
+        Just (P.EventMessage bufId seqNo event) -> return $ Just (bufId, event)
+        Nothing -> return Nothing
+        Just (P.ReplyMessage _ _) -> tryNextEvent
 
 takeReply :: MonadIO m => TChan P.VimMessage -> Int -> Netbeans m P.Reply
 takeReply q seqNo = do
