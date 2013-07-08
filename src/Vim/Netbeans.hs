@@ -15,7 +15,9 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 
 import Control.Applicative ((<$>))
-import Control.Concurrent.Chan (Chan, newChan, readChan, writeChan, dupChan)
+import Control.Concurrent.STM.TChan (TChan, newTChan, readTChan, writeTChan,
+                                     dupTChan, isEmptyTChan)
+import Control.Monad.STM (atomically)
 import Control.Concurrent.MVar (putMVar, takeMVar, MVar, newMVar, withMVar)
 import Control.Concurrent (forkIO)
 
@@ -28,7 +30,7 @@ data ConnState = ConnState
     , connHandle      :: MVar Handle
     , bufNumber       :: MVar Int
     , protVersion     :: Maybe String
-    , messageQueue    :: Chan P.VimMessage
+    , messageQueue    :: TChan P.VimMessage
     , parserMap       :: MVar P.ParserMap
     }
 
@@ -42,7 +44,7 @@ runNetbeans port password vm = do
     (handleC, hostC, portC) <- liftIO $ accept s
     liftIO $ hSetBinaryMode handleC True
     pm <- liftIO $ newMVar []
-    q <- liftIO $ newChan
+    q <- liftIO $ atomically $ newTChan
     seqCounter <- liftIO $ newMVar 1
     hMVar <- liftIO $ newMVar handleC
     bufMVar <- liftIO $ newMVar 1
@@ -64,7 +66,7 @@ preflight = do
     st <- get
     put $ st { protVersion = Just v }
 
-messageReader :: MVar P.ParserMap -> Handle -> Chan P.VimMessage -> IO ()
+messageReader :: MVar P.ParserMap -> Handle -> TChan P.VimMessage -> IO ()
 messageReader pm h q = forever $ do
     line <- hGetLine h
     m <- takeMVar pm
@@ -75,23 +77,23 @@ messageReader pm h q = forever $ do
             hPutStrLn stderr $ "Failed to parse message: " ++ s
         Right eventMsg@(P.EventMessage _ _ _) -> do
             putMVar pm m
-            writeChan q eventMsg
+            atomically $ writeTChan q eventMsg
         Right funcMsg@(P.ReplyMessage seqNo _) -> do
             let m1 = filter ((seqNo /=) . fst)  m
             putMVar pm m1
-            writeChan q funcMsg
+            atomically $ writeTChan q funcMsg
 
 nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
     q <- messageQueue `liftM` get
-    message <- liftIO $ readChan q
+    message <- liftIO $ atomically $ readTChan q
     case message of
         P.EventMessage bufId seqNo event -> return (bufId, event)
         P.ReplyMessage _ _ -> nextEvent
 
-takeReply :: MonadIO m => Chan P.VimMessage -> Int -> Netbeans m P.Reply
+takeReply :: MonadIO m => TChan P.VimMessage -> Int -> Netbeans m P.Reply
 takeReply q seqNo = do
-    message <- liftIO $ readChan q
+    message <- liftIO $ atomically $ readTChan q
     case message of
         P.EventMessage _ _ _ -> takeReply q seqNo
         P.ReplyMessage sn reply -> if seqNo == sn
@@ -132,7 +134,7 @@ sendFunction bufId funcMsg parser = do
 
     hMVar <- connHandle `liftM` get
     q <- messageQueue `liftM` get
-    mq <- liftIO $ dupChan q
+    mq <- liftIO $ atomically $ dupTChan q
 
     pm <- parserMap `liftM` get
     m <- liftIO $ takeMVar pm
