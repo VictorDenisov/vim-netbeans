@@ -255,6 +255,12 @@ saveDone :: MonadIO m => P.BufId -> Netbeans m ()
 saveDone bufId =
     sendCommand bufId $ P.SaveDone
 
+setBufferNumber :: MonadIO m => String -> Netbeans m P.BufId
+setBufferNumber pathname = do
+    bufId <- popBufferId
+    sendCommand bufId $ P.SetBufferNumber pathname
+    return bufId
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
