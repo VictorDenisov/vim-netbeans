@@ -223,6 +223,10 @@ guard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
 guard bufId off len =
     sendCommand bufId $ P.Guard off len
 
+initDone :: MonadIO m => P.BufId -> Netbeans m ()
+initDone bufId =
+    sendCommand bufId $ P.InitDone
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
