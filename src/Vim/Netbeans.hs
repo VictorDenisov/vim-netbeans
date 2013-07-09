@@ -219,6 +219,10 @@ endAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 endAtomic bufId =
     sendCommand bufId $ P.EndAtomic
 
+guard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
+guard bufId off len =
+    sendCommand bufId $ P.Guard off len
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
