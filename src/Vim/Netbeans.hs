@@ -231,6 +231,10 @@ insertDone :: MonadIO m => P.BufId -> Netbeans m ()
 insertDone bufId =
     sendCommand bufId $ P.InsertDone
 
+setNetbeansBuffer :: MonadIO m => P.BufId -> Bool ->  Netbeans m ()
+setNetbeansBuffer bufId isNetbeansBuffer =
+    sendCommand bufId $ P.NetbeansBuffer isNetbeansBuffer
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
