@@ -235,6 +235,10 @@ setNetbeansBuffer :: MonadIO m => P.BufId -> Bool ->  Netbeans m ()
 setNetbeansBuffer bufId isNetbeansBuffer =
     sendCommand bufId $ P.NetbeansBuffer isNetbeansBuffer
 
+putBufferNumber :: MonadIO m => P.BufId -> String -> Netbeans m ()
+putBufferNumber bufId pathname =
+    sendCommand bufId $ P.PutBufferNumber pathname
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
