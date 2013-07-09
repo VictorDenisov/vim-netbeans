@@ -247,6 +247,14 @@ removeAnno :: MonadIO m => P.BufId -> P.AnnoNum -> Netbeans m ()
 removeAnno bufId annoNum =
     sendCommand bufId $ P.RemoveAnno annoNum
 
+save :: MonadIO m => P.BufId -> Netbeans m ()
+save bufId =
+    sendCommand bufId $ P.Save
+
+saveDone :: MonadIO m => P.BufId -> Netbeans m ()
+saveDone bufId =
+    sendCommand bufId $ P.SaveDone
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
