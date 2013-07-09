@@ -150,6 +150,7 @@ data Command = AddAnno
                deriving (Eq, Show)
 
 type BufId = Int
+type AnnoTypeNum = Int
 
 type ParserMap = [(Int, Parser Reply)]
 
