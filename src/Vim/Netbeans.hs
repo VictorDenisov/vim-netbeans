@@ -189,11 +189,11 @@ addAnno bufId typeNum off = do
     return annoId
 
 close :: MonadIO m => P.BufId -> Netbeans m ()
-close bufId = do
+close bufId =
     sendCommand bufId $ P.Close
 
 create :: MonadIO m => P.BufId -> Netbeans m ()
-create bufId = do
+create bufId =
     sendCommand bufId $ P.Close
 
 defineAnnoType :: MonadIO m => P.BufId
@@ -214,6 +214,10 @@ editFile path = do
     bufId <- popBufferId
     sendCommand bufId $ P.EditFile path
     return bufId
+
+endAtomic :: MonadIO m => P.BufId -> Netbeans m ()
+endAtomic bufId =
+    sendCommand bufId $ P.EndAtomic
 
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
