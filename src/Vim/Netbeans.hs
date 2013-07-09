@@ -227,6 +227,10 @@ initDone :: MonadIO m => P.BufId -> Netbeans m ()
 initDone bufId =
     sendCommand bufId $ P.InitDone
 
+insertDone :: MonadIO m => P.BufId -> Netbeans m ()
+insertDone bufId =
+    sendCommand bufId $ P.InsertDone
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
