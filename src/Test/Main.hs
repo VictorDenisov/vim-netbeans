@@ -1,5 +1,5 @@
 import Network.Socket.Internal (PortNumber(..))
-import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno)
+import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno, close)
 import Vim.Netbeans.Protocol (Color(..))
 import Control.Monad.Trans (liftIO)
 import Network

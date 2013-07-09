@@ -188,6 +188,10 @@ addAnno bufId typeNum off = do
     sendCommand bufId $ P.AddAnno annoId typeNum off 0
     return annoId
 
+close :: MonadIO m => P.BufId -> Netbeans m ()
+close bufId = do
+    sendCommand bufId $ P.Close
+
 defineAnnoType :: MonadIO m => P.BufId
                             -> String
                             -> String
