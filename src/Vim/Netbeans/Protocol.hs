@@ -151,6 +151,7 @@ data Command = AddAnno
 
 type BufId = Int
 type AnnoTypeNum = Int
+type AnnoNum = Int
 
 type ParserMap = [(Int, Parser Reply)]
 

@@ -1,5 +1,5 @@
 import Network.Socket.Internal (PortNumber(..))
-import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType)
+import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno)
 import Vim.Netbeans.Protocol (Color(..))
 import Control.Monad.Trans (liftIO)
 import Network
@@ -9,6 +9,7 @@ main = runNetbeans (PortNumber 4444) "password" $ do
     b <- editFile "README"
     l <- getLength b
     a <- defineAnnoType b "myTypeName" "" "=>" Red Blue
+    an <- addAnno b a 1
     liftIO $ putStrLn $ show a
     liftIO $ putStrLn $ show b
     liftIO $ putStrLn $ show l

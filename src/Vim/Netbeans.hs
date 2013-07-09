@@ -30,6 +30,7 @@ data ConnState = ConnState
     , connHandle      :: MVar Handle
     , bufNumber       :: MVar Int
     , annoTypeNumber  :: MVar Int
+    , annoNumber      :: MVar Int
     , protVersion     :: Maybe String
     , messageQueue    :: TChan P.VimMessage
     , parserMap       :: MVar P.ParserMap
@@ -49,12 +50,14 @@ runNetbeans port password vm = do
     seqCounter <- liftIO $ newMVar 1
     hMVar <- liftIO $ newMVar handleC
     bufMVar <- liftIO $ newMVar 1
+    annoTypeMVar <- liftIO $ newMVar 1
     annoMVar <- liftIO $ newMVar 1
     liftIO $ forkIO $ messageReader pm handleC q
     runStateT (preflight >> vm) (ConnState
                                     seqCounter
                                     hMVar
                                     bufMVar
+                                    annoTypeMVar
                                     annoMVar
                                     Nothing
                                     q
@@ -136,6 +139,14 @@ popAnnoTypeNum = do
     liftIO $ putMVar annoMVar (annoNo + 1)
     return annoNo
 
+popAnnoNum :: MonadIO m => Netbeans m P.AnnoNum
+popAnnoNum = do
+    st <- get
+    let annoMVar = annoNumber st
+    annoNo <- liftIO $ takeMVar annoMVar
+    liftIO $ putMVar annoMVar (annoNo + 1)
+    return annoNo
+
 sendCommand :: MonadIO m => P.BufId -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
     seqNo <- popCommandNumber
@@ -168,6 +179,15 @@ sendFunction bufId funcMsg parser = do
     reply <- takeReply mq seqNo
     return reply
 
+addAnno :: MonadIO m => P.BufId
+                     -> P.AnnoTypeNum
+                     -> Int
+                     -> Netbeans m P.AnnoNum
+addAnno bufId typeNum off = do
+    annoId <- popAnnoNum
+    sendCommand bufId $ P.AddAnno annoId typeNum off 0
+    return annoId
+
 defineAnnoType :: MonadIO m => P.BufId
                             -> String
                             -> String
@@ -176,9 +196,10 @@ defineAnnoType :: MonadIO m => P.BufId
                             -> P.Color
                             -> Netbeans m P.AnnoTypeNum
 defineAnnoType bufId typeName toolTip glyphFile fg bg = do
-    annoId <- popAnnoTypeNum
-    sendCommand bufId $ P.DefineAnnoType annoId typeName toolTip glyphFile fg bg
-    return annoId
+    annoTypeId <- popAnnoTypeNum
+    sendCommand bufId $
+                    P.DefineAnnoType annoTypeId typeName toolTip glyphFile fg bg
+    return annoTypeId
 
 editFile :: MonadIO m => String -> Netbeans m P.BufId
 editFile path = do
