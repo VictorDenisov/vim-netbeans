@@ -265,6 +265,10 @@ setDot :: MonadIO m => P.BufId -> Int -> Netbeans m ()
 setDot bufId off =
     sendCommand bufId $ P.SetDot off
 
+setExitDelay :: MonadIO m => Int -> Netbeans m ()
+setExitDelay seconds =
+    sendCommand 0 $ P.SetExitDelay seconds
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
