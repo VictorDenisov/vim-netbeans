@@ -192,6 +192,10 @@ close :: MonadIO m => P.BufId -> Netbeans m ()
 close bufId = do
     sendCommand bufId $ P.Close
 
+create :: MonadIO m => P.BufId -> Netbeans m ()
+create bufId = do
+    sendCommand bufId $ P.Close
+
 defineAnnoType :: MonadIO m => P.BufId
                             -> String
                             -> String
