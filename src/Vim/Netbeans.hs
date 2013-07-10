@@ -273,6 +273,10 @@ setFullName :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setFullName bufId pathname =
     sendCommand bufId $ P.SetFullName pathname
 
+setModified :: MonadIO m => P.BufId -> Bool -> Netbeans m ()
+setModified bufId modified =
+    sendCommand bufId $ P.SetModified modified
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
