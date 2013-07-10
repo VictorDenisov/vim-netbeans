@@ -9,3 +9,6 @@ DESCRIPTION
 
 This is an implementation of the vim netbeans protocol
 <http://vimdoc.sourceforge.net/htmldoc/netbeans.html>.
+
+setModTime is not implemented yet due to lack of information about time format
+in vim-netbeans protocol.
