@@ -269,6 +269,10 @@ setExitDelay :: MonadIO m => Int -> Netbeans m ()
 setExitDelay seconds =
     sendCommand 0 $ P.SetExitDelay seconds
 
+setFullName :: MonadIO m => P.BufId -> String -> Netbeans m ()
+setFullName bufId pathname =
+    sendCommand bufId $ P.SetFullName pathname
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
