@@ -26,6 +26,8 @@ data Reply = GetCursorReply
                 Int -- lnum
            | GetModifiedReply
                 Int -- modified count or boolean
+           | GetTextReply
+                String -- text
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -209,6 +211,13 @@ getModifiedReplyParser :: Parser Reply
 getModifiedReplyParser = do
     count <- parseNumber
     return $ GetModifiedReply count
+
+getTextReplyParser :: Parser Reply
+getTextReplyParser = do
+    string "\""
+    text <- many1 $ noneOf "\""
+    string "\""
+    return $ GetTextReply text
 
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = try (versionParser bufId)
