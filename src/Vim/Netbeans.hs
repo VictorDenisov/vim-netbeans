@@ -356,3 +356,11 @@ getModifiedBuffer bufId = do
     return $ case count of
         0 -> True
         _ -> False
+
+getText :: MonadIO m => P.BufId -> Netbeans m String
+getText bufId = do
+    P.GetTextReply text <- sendFunction
+                                bufId
+                                P.GetText
+                                P.getTextReplyParser
+    return text
