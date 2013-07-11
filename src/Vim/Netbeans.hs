@@ -315,14 +315,6 @@ unguard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
 unguard bufId off len =
     sendCommand bufId $ P.Unguard off len
 
-getLength :: MonadIO m => P.BufId -> Netbeans m Int
-getLength bufId = do
-    P.GetLengthReply value <- sendFunction
-                                    bufId
-                                    P.GetLength
-                                    P.getLengthReplyParser
-    return value
-
 getCursor :: MonadIO m => Netbeans m (P.BufId, Int, Int, Int)
 getCursor = do
     P.GetCursorReply bufId lnum col off <- sendFunction
@@ -330,6 +322,14 @@ getCursor = do
                                                     P.GetCursor
                                                     P.getCursorReplyParser
     return (bufId, lnum, col, off)
+
+getLength :: MonadIO m => P.BufId -> Netbeans m Int
+getLength bufId = do
+    P.GetLengthReply value <- sendFunction
+                                    bufId
+                                    P.GetLength
+                                    P.getLengthReplyParser
+    return value
 
 getAnno :: MonadIO m => P.BufId -> Int -> Netbeans m Int
 getAnno bufId serNum = do
