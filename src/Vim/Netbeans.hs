@@ -338,3 +338,21 @@ getAnno bufId serNum = do
                               (P.GetAnno serNum)
                               P.getAnnoReplyParser
     return lnum
+
+getModified :: MonadIO m => Netbeans m Int
+getModified = do
+    P.GetModifiedReply count <- sendFunction
+                                    0
+                                    P.GetModified
+                                    P.getModifiedReplyParser
+    return count
+
+getModifiedBuffer :: MonadIO m => P.BufId -> Netbeans m Bool
+getModifiedBuffer bufId = do
+    P.GetModifiedReply count <- sendFunction
+                                    bufId
+                                    P.GetModified
+                                    P.getModifiedReplyParser
+    return $ case count of
+        0 -> True
+        _ -> False
