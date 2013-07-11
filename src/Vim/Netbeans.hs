@@ -3,10 +3,10 @@ where
 
 import GHC.IO.Handle (Handle, hClose, hSetBinaryMode, hPutStr, hFlush)
 import Control.Monad.Trans (liftIO, lift, MonadTrans)
-import Control.Monad (liftM, forever)
+import Control.Monad (liftM, forever, forM_)
 import Control.Monad.State (StateT(..), MonadState(..), evalStateT)
 import Network (listenOn, accept, PortID)
-import System.IO (hGetLine, hPutStrLn, stderr)
+import System.IO (hGetContents, hPutStrLn, stderr)
 import Control.Monad.Error (ErrorT, runErrorT, MonadError(..), Error(..))
 import Control.Monad.IO.Class (MonadIO)
 
@@ -73,21 +73,23 @@ preflight = do
     put $ st { protVersion = Just v }
 
 messageReader :: MVar P.ParserMap -> Handle -> TChan P.VimMessage -> IO ()
-messageReader pm h q = forever $ do
-    line <- hGetLine h
-    m <- takeMVar pm
-    let msg = P.parseMessage m line
-    case msg of
-        Left s -> do
-            putMVar pm m
-            hPutStrLn stderr $ "Failed to parse message: " ++ s
-        Right eventMsg@(P.EventMessage _ _ _) -> do
-            putMVar pm m
-            atomically $ writeTChan q eventMsg
-        Right funcMsg@(P.ReplyMessage seqNo _) -> do
-            let m1 = filter ((seqNo /=) . fst)  m
-            putMVar pm m1
-            atomically $ writeTChan q funcMsg
+messageReader pm h q = do
+    contents <- hGetContents h
+    let lineList = lines contents
+    forM_ lineList $ \line -> do
+        m <- takeMVar pm
+        let msg = P.parseMessage m line
+        case msg of
+            Left s -> do
+                putMVar pm m
+                hPutStrLn stderr $ "Failed to parse message: " ++ s
+            Right eventMsg@(P.EventMessage _ _ _) -> do
+                putMVar pm m
+                atomically $ writeTChan q eventMsg
+            Right funcMsg@(P.ReplyMessage seqNo _) -> do
+                let m1 = filter ((seqNo /=) . fst)  m
+                putMVar pm m1
+                atomically $ writeTChan q funcMsg
 
 nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
