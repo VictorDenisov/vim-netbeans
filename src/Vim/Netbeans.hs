@@ -285,6 +285,10 @@ setTitle :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setTitle bufId name =
     sendCommand bufId $ P.SetTitle name
 
+setVisible :: MonadIO m => P.BufId -> Bool -> Netbeans m ()
+setVisible bufId visible =
+    sendCommand bufId $ P.SetVisible visible
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
