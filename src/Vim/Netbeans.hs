@@ -277,6 +277,10 @@ setModified :: MonadIO m => P.BufId -> Bool -> Netbeans m ()
 setModified bufId modified =
     sendCommand bufId $ P.SetModified modified
 
+setReadonly :: MonadIO m => P.BufId -> Netbeans m ()
+setReadonly bufId =
+    sendCommand bufId $ P.SetReadOnly
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
