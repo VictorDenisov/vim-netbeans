@@ -293,6 +293,10 @@ showBalloon :: MonadIO m => P.BufId -> String -> Netbeans m ()
 showBalloon bufId text =
     sendCommand bufId $ P.ShowBalloon text
 
+specialKeys :: MonadIO m => P.BufId -> Netbeans m ()
+specialKeys bufId =
+    sendCommand bufId $ P.SpecialKeys
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
