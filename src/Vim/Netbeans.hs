@@ -301,6 +301,10 @@ startAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 startAtomic bufId =
     sendCommand bufId $ P.StartAtomic
 
+startDocumentListen :: MonadIO m => P.BufId -> Netbeans m ()
+startDocumentListen bufId =
+    sendCommand bufId $ P.StartDocumentListen
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
