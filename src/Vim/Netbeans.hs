@@ -281,6 +281,10 @@ setReadonly :: MonadIO m => P.BufId -> Netbeans m ()
 setReadonly bufId =
     sendCommand bufId $ P.SetReadOnly
 
+setTitle :: MonadIO m => P.BufId -> String -> Netbeans m ()
+setTitle bufId name =
+    sendCommand bufId $ P.SetTitle name
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
