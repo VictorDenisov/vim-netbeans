@@ -305,6 +305,10 @@ startDocumentListen :: MonadIO m => P.BufId -> Netbeans m ()
 startDocumentListen bufId =
     sendCommand bufId $ P.StartDocumentListen
 
+unguard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
+unguard bufId off len =
+    sendCommand bufId $ P.Unguard off len
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
