@@ -24,6 +24,8 @@ data Reply = GetCursorReply
                 Int -- len
            | GetAnnoReply
                 Int -- lnum
+           | GetModifiedReply
+                Int -- modified count or boolean
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -202,6 +204,11 @@ getAnnoReplyParser :: Parser Reply
 getAnnoReplyParser = do
     lnum <- parseNumber
     return $ GetAnnoReply lnum
+
+getModifiedReplyParser :: Parser Reply
+getModifiedReplyParser = do
+    count <- parseNumber
+    return $ GetModifiedReply count
 
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = try (versionParser bufId)

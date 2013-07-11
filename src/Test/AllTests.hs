@@ -67,6 +67,11 @@ parseGetAnnoReply = (Right $ N.ReplyMessage 1 $ N.GetAnnoReply 2)
                       @=?
                       (N.parseMessage [(1, N.getAnnoReplyParser)] "1 2")
 
+parseGetModifiedReply :: Assertion
+parseGetModifiedReply = (Right $ N.ReplyMessage 1 $ N.GetModifiedReply 1)
+                        @=?
+                        (N.parseMessage [(1, N.getModifiedReplyParser)] "1 1")
+
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
                          @=?
