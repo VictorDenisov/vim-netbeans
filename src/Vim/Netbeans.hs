@@ -297,6 +297,10 @@ specialKeys :: MonadIO m => P.BufId -> Netbeans m ()
 specialKeys bufId =
     sendCommand bufId $ P.SpecialKeys
 
+startAtomic :: MonadIO m => P.BufId -> Netbeans m ()
+startAtomic bufId =
+    sendCommand bufId $ P.StartAtomic
+
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
