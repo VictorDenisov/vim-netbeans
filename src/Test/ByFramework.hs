@@ -28,6 +28,8 @@ tests = [ testGroup "parseNumber"
             , testCase "parseGetTextReply" parseGetTextReply
             , testCase "parseInsertReplySuccess" parseInsertReplySuccess
             , testCase "parseInsertReplyError" parseInsertReplyError
+            , testCase "parseRemoveReplySuccess" parseRemoveReplySuccess
+            , testCase "parseRemoveReplyError" parseRemoveReplyError
             ]
         , testGroup "printCommand"
             [ testCase "printDisconnectMessage" printDisconnectMessage

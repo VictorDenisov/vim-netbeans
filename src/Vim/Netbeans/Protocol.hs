@@ -31,6 +31,9 @@ data Reply = GetCursorReply
            | InsertReplySuccess
            | InsertReplyError
                 String -- error message
+           | RemoveReplySuccess
+           | RemoveReplyError
+                String -- error message
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -233,6 +236,16 @@ insertErrorReplyParser = do
     string " !"
     text <- many1 $ anyChar
     return $ InsertReplyError text
+
+removeReplyParser :: Parser Reply
+removeReplyParser = do
+    try removeErrorReplyParser <|> return RemoveReplySuccess
+
+removeErrorReplyParser :: Parser Reply
+removeErrorReplyParser = do
+    string " !"
+    text <- many1 $ anyChar
+    return $ RemoveReplyError text
 
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = char ':' >> (try (versionParser bufId)
