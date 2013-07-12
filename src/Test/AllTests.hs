@@ -83,9 +83,9 @@ parseInsertReplySuccess = (Right $ N.ReplyMessage 1 $ N.InsertReplySuccess)
                               (N.parseMessage [(1, N.insertReplyParser)] "1")
 
 parseInsertReplyError :: Assertion
-parseInsertReplyError = (Right $ N.ReplyMessage 1 $ N.InsertReplyError "error")
+parseInsertReplyError = (Right $ N.ReplyMessage 1 $ N.InsertReplyError "error message")
                         @=?
-                        (N.parseMessage [(1, N.insertReplyParser)] "1 !error")
+                        (N.parseMessage [(1, N.insertReplyParser)] "1 !error message")
 
 parseRemoveReplySuccess :: Assertion
 parseRemoveReplySuccess = (Right $ N.ReplyMessage 1 $ N.RemoveReplySuccess)
@@ -93,9 +93,9 @@ parseRemoveReplySuccess = (Right $ N.ReplyMessage 1 $ N.RemoveReplySuccess)
                               (N.parseMessage [(1, N.removeReplyParser)] "1")
 
 parseRemoveReplyError :: Assertion
-parseRemoveReplyError = (Right $ N.ReplyMessage 1 $ N.RemoveReplyError "error")
+parseRemoveReplyError = (Right $ N.ReplyMessage 1 $ N.RemoveReplyError "error message")
                         @=?
-                        (N.parseMessage [(1, N.removeReplyParser)] "1 !error")
+                        (N.parseMessage [(1, N.removeReplyParser)] "1 !error message")
 
 printDisconnectMessage :: Assertion
 printDisconnectMessage = "DISCONNECT\n"
