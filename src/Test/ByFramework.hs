@@ -26,6 +26,8 @@ tests = [ testGroup "parseNumber"
             , testCase "parseGetAnnoReply" parseGetAnnoReply
             , testCase "parseGetModifiedReply" parseGetModifiedReply
             , testCase "parseGetTextReply" parseGetTextReply
+            , testCase "parseInsertReplySuccess" parseInsertReplySuccess
+            , testCase "parseInsertReplyError" parseInsertReplyError
             ]
         , testGroup "printCommand"
             [ testCase "printDisconnectMessage" printDisconnectMessage

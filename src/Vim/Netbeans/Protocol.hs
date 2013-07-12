@@ -28,6 +28,9 @@ data Reply = GetCursorReply
                 Int -- modified count or boolean
            | GetTextReply
                 String -- text
+           | InsertReplySuccess
+           | InsertReplyError
+                String -- error message
              deriving (Eq, Show)
 
 data Function = GetCursor
@@ -175,10 +178,7 @@ messageParser parserMap = try authParser
 regularMessageParser :: ParserMap -> Parser VimMessage
 regularMessageParser parserMap = do
     num <- parseNumber
-    c <- oneOf ": "
-    case c of
-        ' ' -> replyParser num parserMap
-        ':' -> eventParser num
+    try (eventParser num) <|> replyParser num parserMap
 
 replyParser :: Int -> ParserMap -> Parser VimMessage
 replyParser seqno parserMap = do
@@ -188,6 +188,7 @@ replyParser seqno parserMap = do
 
 getCursorReplyParser :: Parser Reply
 getCursorReplyParser = do
+    char ' '
     bufId <- parseNumber
     char ' '
     lnum <- parseNumber
@@ -199,32 +200,46 @@ getCursorReplyParser = do
 
 getLengthReplyParser :: Parser Reply
 getLengthReplyParser = do
+    char ' '
     len <- parseNumber
     return $ GetLengthReply len
 
 getAnnoReplyParser :: Parser Reply
 getAnnoReplyParser = do
+    char ' '
     lnum <- parseNumber
     return $ GetAnnoReply lnum
 
 getModifiedReplyParser :: Parser Reply
 getModifiedReplyParser = do
+    char ' '
     count <- parseNumber
     return $ GetModifiedReply count
 
 getTextReplyParser :: Parser Reply
 getTextReplyParser = do
+    char ' '
     string "\""
     text <- many1 $ noneOf "\""
     string "\""
     return $ GetTextReply text
 
+insertReplyParser :: Parser Reply
+insertReplyParser = do
+    try insertErrorReplyParser <|> return InsertReplySuccess
+
+insertErrorReplyParser :: Parser Reply
+insertErrorReplyParser = do
+    string " !"
+    text <- many1 $ anyChar
+    return $ InsertReplyError text
+
 eventParser :: BufId -> Parser VimMessage
-eventParser bufId = try (versionParser bufId)
+eventParser bufId = char ':' >> (try (versionParser bufId)
                 <|> try (startupDoneParser bufId)
                 <|> try (fileOpenedParser bufId)
                 <|> try (newDotAndMarkParser bufId)
-                <|> try (keyCommandParser bufId)
+                <|> try (keyCommandParser bufId))
 
 parseError :: Parser VimMessage
 parseError = do
