@@ -247,6 +247,10 @@ removeErrorReplyParser = do
     text <- many1 $ anyChar
     return $ RemoveReplyError text
 
+saveAndExitReplyParser :: Parser Reply
+saveAndExitReplyParser = undefined -- This parser is place holder only.
+                                   -- It should not be invoked ever.
+
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = char ':' >> (try (versionParser bufId)
                 <|> try (startupDoneParser bufId)

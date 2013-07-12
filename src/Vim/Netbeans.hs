@@ -384,3 +384,11 @@ remove bufId off len = do
     case replyMessage of
         P.RemoveReplySuccess -> return ()
         P.RemoveReplyError s -> throwError $ strMsg s
+
+saveAndExit :: MonadIO m => Netbeans m ()
+saveAndExit = do
+    sendFunction
+                0
+                P.SaveAndExit
+                P.saveAndExitReplyParser
+    return ()
