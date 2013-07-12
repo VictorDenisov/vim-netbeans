@@ -16,6 +16,11 @@ parseNumberNegative = case parse N.parseNumber "(unknown)" "-12" of
                 Right n -> n @=? (-12)
                 Left _ -> assertFailure "parsing failure"
 
+parseBalloonText :: Assertion
+parseBalloonText = (Right $ N.EventMessage 0 1 $ N.BalloonText "text")
+                   @=?
+                   (N.parseMessage [] "0:balloonText=1 \"text\"")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?

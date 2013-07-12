@@ -50,7 +50,9 @@ data Function = GetCursor
               | SaveAndExit
                 deriving (Eq, Show)
 
-data Event = FileOpened
+data Event = BalloonText
+                String -- text
+           | FileOpened
                 String -- path
                 Bool -- open
                 Bool -- modified
@@ -252,11 +254,13 @@ saveAndExitReplyParser = undefined -- This parser is place holder only.
                                    -- It should not be invoked ever.
 
 eventParser :: BufId -> Parser VimMessage
-eventParser bufId = char ':' >> (try (versionParser bufId)
-                <|> try (startupDoneParser bufId)
+eventParser bufId = char ':' >>
+                   (try (balloonTextParser bufId)
                 <|> try (fileOpenedParser bufId)
+                <|> try (keyCommandParser bufId)
                 <|> try (newDotAndMarkParser bufId)
-                <|> try (keyCommandParser bufId))
+                <|> try (startupDoneParser bufId)
+                <|> try (versionParser bufId))
 
 parseError :: Parser VimMessage
 parseError = do
@@ -290,6 +294,21 @@ startupDoneParser bufId = do
     string "startupDone="
     seqN <- parseNumber
     return $ EventMessage bufId seqN $ StartupDone
+
+parseString :: Parser String
+parseString = do
+    string "\""
+    s <- many1 $ noneOf "\""
+    string "\""
+    return s
+
+balloonTextParser :: BufId -> Parser VimMessage
+balloonTextParser bufId = do
+    string "balloonText="
+    seqNo <- parseNumber
+    char ' '
+    text <- parseString
+    return $ EventMessage bufId seqNo $ BalloonText text
 
 fileOpenedParser :: BufId -> Parser VimMessage
 fileOpenedParser bufId = do
