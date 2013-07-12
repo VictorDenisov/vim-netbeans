@@ -364,3 +364,23 @@ getText bufId = do
                                 P.GetText
                                 P.getTextReplyParser
     return text
+
+insert :: (Error e, MonadIO m, MonadError e m) => P.BufId -> Int -> String -> Netbeans m ()
+insert bufId off text = do
+    replyMessage <- sendFunction
+                        bufId
+                        (P.Insert off text)
+                        P.insertReplyParser
+    case replyMessage of
+        P.InsertReplySuccess -> return ()
+        P.InsertReplyError s -> throwError $ strMsg s
+
+remove :: (Error e, MonadIO m, MonadError e m) => P.BufId -> Int -> Int -> Netbeans m ()
+remove bufId off len = do
+    replyMessage <- sendFunction
+                        bufId
+                        (P.Remove off len)
+                        P.insertReplyParser
+    case replyMessage of
+        P.RemoveReplySuccess -> return ()
+        P.RemoveReplyError s -> throwError $ strMsg s
