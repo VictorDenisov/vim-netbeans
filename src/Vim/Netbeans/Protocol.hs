@@ -52,6 +52,10 @@ data Function = GetCursor
 
 data Event = BalloonText
                 String -- text
+           | ButtonRelease
+                Int -- button
+                Int -- lnum
+                Int -- col
            | FileOpened
                 String -- path
                 Bool -- open
@@ -256,6 +260,7 @@ saveAndExitReplyParser = undefined -- This parser is place holder only.
 eventParser :: BufId -> Parser VimMessage
 eventParser bufId = char ':' >>
                    (try (balloonTextParser bufId)
+                <|> try (buttonReleaseParser bufId)
                 <|> try (fileOpenedParser bufId)
                 <|> try (keyCommandParser bufId)
                 <|> try (newDotAndMarkParser bufId)
@@ -309,6 +314,18 @@ balloonTextParser bufId = do
     char ' '
     text <- parseString
     return $ EventMessage bufId seqNo $ BalloonText text
+
+buttonReleaseParser :: BufId -> Parser VimMessage
+buttonReleaseParser bufId = do
+    string "buttonRelease="
+    seqNo <- parseNumber
+    char ' '
+    button <- parseNumber
+    char ' '
+    lnum <- parseNumber
+    char ' '
+    col <- parseNumber
+    return $ EventMessage bufId seqNo $ ButtonRelease button lnum col
 
 fileOpenedParser :: BufId -> Parser VimMessage
 fileOpenedParser bufId = do

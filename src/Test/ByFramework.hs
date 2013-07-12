@@ -14,6 +14,7 @@ tests = [ testGroup "parseNumber"
         , testGroup "parseMessage"
             [ testCase "parseAuthMessage" parseAuthMessage
             , testCase "parseBalloonText" parseBalloonText
+            , testCase "parseButtonRelease" parseButtonRelease
             , testCase "parseFileOpenedMessage" parseFileOpenedMessage
             , testCase "parseVersionMessage" parseVersionMessage
             , testCase "parseKeyCommandMessage" parseKeyCommandMessage

@@ -21,6 +21,11 @@ parseBalloonText = (Right $ N.EventMessage 0 1 $ N.BalloonText "text")
                    @=?
                    (N.parseMessage [] "0:balloonText=1 \"text\"")
 
+parseButtonRelease :: Assertion
+parseButtonRelease = (Right $ N.EventMessage 0 1 $ N.ButtonRelease 2 3 4)
+                     @=?
+                     (N.parseMessage [] "0:buttonRelease=1 2 3 4")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
