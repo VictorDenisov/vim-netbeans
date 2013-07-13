@@ -229,9 +229,7 @@ getModifiedReplyParser = do
 getTextReplyParser :: Parser Reply
 getTextReplyParser = do
     char ' '
-    string "\""
-    text <- many1 $ noneOf "\""
-    string "\""
+    text <- parseString
     return $ GetTextReply text
 
 insertReplyParser :: Parser Reply
@@ -339,9 +337,9 @@ fileOpenedParser :: BufId -> Parser VimMessage
 fileOpenedParser bufId = do
     string "fileOpened="
     seqN <- parseNumber
-    string " \""
-    path <- many1 $ noneOf "\""
-    string "\" "
+    char ' '
+    path <- parseString
+    char ' '
     open <- oneOf "TF"
     char ' '
     modified <- oneOf "TF"
@@ -351,8 +349,8 @@ keyCommandParser :: BufId -> Parser VimMessage
 keyCommandParser bufId = do
     string "keyCommand="
     seqN <- parseNumber
-    string " \""
-    key <- many1 $ noneOf "\""
+    char ' '
+    key <- parseString
     return $ EventMessage bufId seqN $ KeyCommand key
 
 newDotAndMarkParser :: BufId -> Parser VimMessage
