@@ -21,6 +21,7 @@ tests = [ testGroup "parseNumber"
             , testCase "parseInsert" parseInsert
             , testCase "parseKeyCommandMessage" parseKeyCommandMessage
             , testCase "parseKeyAtPos" parseKeyAtPos
+            , testCase "parseKilled" parseKilled
             , testCase "parseVersionMessage" parseVersionMessage
             , testCase "parseNewDotAndMarkMessage" parseNewDotAndMarkMessage
             , testCase "parseStartupDoneMessage" parseStartupDoneMessage

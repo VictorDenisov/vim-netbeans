@@ -51,6 +51,11 @@ parseKeyAtPos = (Right $ N.EventMessage 0 1 $ N.KeyAtPos "F1" 2 3)
                 @=?
                 (N.parseMessage [] "0:keyAtPos=1 \"F1\" 2/3")
 
+parseKilled :: Assertion
+parseKilled = (Right $ N.EventMessage 0 1 $ N.Killed)
+              @=?
+              (N.parseMessage [] "0:killed=1")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
