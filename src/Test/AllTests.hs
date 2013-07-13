@@ -36,6 +36,11 @@ parseGeometry = (Right $ N.EventMessage 0 1 $ N.Geometry 2 3 4 5)
                 @=?
                 (N.parseMessage [] "0:geometry=1 2 3 4 5")
 
+parseInsert :: Assertion
+parseInsert = (Right $ N.EventMessage 0 1 $ N.InsertEvent 2 "text")
+              @=?
+              (N.parseMessage [] "0:insert=1 2 \"text\"")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?

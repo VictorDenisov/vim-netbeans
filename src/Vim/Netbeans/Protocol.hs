@@ -66,6 +66,9 @@ data Event = BalloonText
                 Int -- rows
                 Int -- x
                 Int -- y
+           | InsertEvent
+                Int -- off
+                String -- text
            | KeyCommand
                 String -- key
            | NewDotAndMark
@@ -268,6 +271,7 @@ eventParser bufId = char ':' >>
                 <|> try (disconnectParser bufId)
                 <|> try (fileOpenedParser bufId)
                 <|> try (geometryParser bufId)
+                <|> try (insertParser bufId)
                 <|> try (keyCommandParser bufId)
                 <|> try (newDotAndMarkParser bufId)
                 <|> try (startupDoneParser bufId)
@@ -369,6 +373,16 @@ geometryParser bufId = do
     char ' '
     y <- parseNumber
     return $ EventMessage bufId seqN $ Geometry cols rows x y
+
+insertParser :: BufId -> Parser VimMessage
+insertParser bufId = do
+    string "insert="
+    seqN <- parseNumber
+    char ' '
+    off <- parseNumber
+    char ' '
+    text <- parseString
+    return $ EventMessage bufId seqN $ InsertEvent off text
 
 keyCommandParser :: BufId -> Parser VimMessage
 keyCommandParser bufId = do
