@@ -61,6 +61,11 @@ data Event = BalloonText
                 String -- path
                 Bool -- open
                 Bool -- modified
+           | Geometry
+                Int -- cols
+                Int -- rows
+                Int -- x
+                Int -- y
            | KeyCommand
                 String -- key
            | NewDotAndMark
@@ -262,6 +267,7 @@ eventParser bufId = char ':' >>
                 <|> try (buttonReleaseParser bufId)
                 <|> try (disconnectParser bufId)
                 <|> try (fileOpenedParser bufId)
+                <|> try (geometryParser bufId)
                 <|> try (keyCommandParser bufId)
                 <|> try (newDotAndMarkParser bufId)
                 <|> try (startupDoneParser bufId)
@@ -349,6 +355,20 @@ fileOpenedParser bufId = do
     char ' '
     modified <- parseBool
     return $ EventMessage bufId seqN $ FileOpened path open modified
+
+geometryParser :: BufId -> Parser VimMessage
+geometryParser bufId = do
+    string "geometry="
+    seqN <- parseNumber
+    char ' '
+    cols <- parseNumber
+    char ' '
+    rows <- parseNumber
+    char ' '
+    x <- parseNumber
+    char ' '
+    y <- parseNumber
+    return $ EventMessage bufId seqN $ Geometry cols rows x y
 
 keyCommandParser :: BufId -> Parser VimMessage
 keyCommandParser bufId = do

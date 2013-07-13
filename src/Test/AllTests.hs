@@ -31,6 +31,11 @@ parseDisconnect = (Right $ N.EventMessage 0 1 $ N.Disconnect)
                   @=?
                   (N.parseMessage [] "0:disconnect=1")
 
+parseGeometry :: Assertion
+parseGeometry = (Right $ N.EventMessage 0 1 $ N.Geometry 2 3 4 5)
+                @=?
+                (N.parseMessage [] "0:geometry=1 2 3 4 5")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?

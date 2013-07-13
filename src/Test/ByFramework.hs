@@ -17,6 +17,7 @@ tests = [ testGroup "parseNumber"
             , testCase "parseButtonRelease" parseButtonRelease
             , testCase "parseDisconnect" parseDisconnect
             , testCase "parseFileOpenedMessage" parseFileOpenedMessage
+            , testCase "parseGeometry" parseGeometry
             , testCase "parseVersionMessage" parseVersionMessage
             , testCase "parseKeyCommandMessage" parseKeyCommandMessage
             , testCase "parseNewDotAndMarkMessage" parseNewDotAndMarkMessage
