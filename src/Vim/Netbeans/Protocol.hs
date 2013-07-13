@@ -88,12 +88,6 @@ data Event = BalloonText
            | Version
                 String
            | Auth String
-           | E463
-           | E532
-           | E656
-           | E657
-           | E658
-           | E744
              deriving (Eq, Show)
 
 data Color = Red
@@ -200,7 +194,6 @@ parseNumber = do
 
 messageParser :: ParserMap -> Parser VimMessage
 messageParser parserMap = try authParser
-                      <|> try parseError
                       <|> try (regularMessageParser parserMap)
 
 regularMessageParser :: ParserMap -> Parser VimMessage
@@ -291,18 +284,6 @@ eventParser bufId = char ':' >>
                 <|> try (startupDoneParser bufId)
                 <|> try (unmodifiedParser bufId)
                 <|> try (versionParser bufId))
-
-parseError :: Parser VimMessage
-parseError = do
-    char 'E'
-    s <- count 3 digit
-    case s of
-        "463" -> return $ EventMessage (-1) (-1) $ E463 -- Region is guarded, cannot modify
-        "532" -> return $ EventMessage (-1) (-1) $ E532 -- The defineAnnoType highlighting color name is too long
-        "656" -> return $ EventMessage (-1) (-1) $ E656 -- Writes of unmodified buffers forbidden
-        "657" -> return $ EventMessage (-1) (-1) $ E657 -- Partial writes disallowed
-        "658" -> return $ EventMessage (-1) (-1) $ E658 -- Connection lost for this buffer
-        "744" -> return $ EventMessage (-1) (-1) $ E744 -- Read-only file
 
 authParser :: Parser VimMessage
 authParser = do

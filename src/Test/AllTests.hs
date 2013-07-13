@@ -97,11 +97,6 @@ parseFileOpenedMessage = (Right $ N.EventMessage 0 1 $ N.FileOpened
                          @=?
                          (N.parseMessage [] "0:fileOpened=1 \"pathname\" T F")
 
-parseErrorMessage :: Assertion
-parseErrorMessage = (Right $ N.EventMessage (-1) (-1) $ N.E463)
-                    @=?
-                    (N.parseMessage [] "E463")
-
 parseGetCursorReply :: Assertion
 parseGetCursorReply = (Right $ N.ReplyMessage 0 $ N.GetCursorReply 1 2 3 4)
                       @=?

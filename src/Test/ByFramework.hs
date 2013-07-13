@@ -28,7 +28,6 @@ tests = [ testGroup "parseNumber"
             , testCase "parseStartupDoneMessage" parseStartupDoneMessage
             , testCase "parseUnmodified" parseUnmodified
             , testCase "parseVersionMessage" parseVersionMessage
-            , testCase "parseErrorMessage" parseErrorMessage
             ]
         , testGroup "parseReply"
             [ testCase "parseGetCursorReply" parseGetCursorReply
