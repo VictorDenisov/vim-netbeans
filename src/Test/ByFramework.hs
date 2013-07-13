@@ -11,23 +11,23 @@ tests = [ testGroup "parseNumber"
             [ testCase "parseNumber" parseNumber
             , testCase "parseNumberNegative" parseNumberNegative
             ]
-        , testGroup "parseMessage"
-            [ testCase "parseAuthMessage" parseAuthMessage
+        , testGroup "parseEvent"
+            [ testCase "parseAuth" parseAuth
             , testCase "parseBalloonText" parseBalloonText
             , testCase "parseButtonRelease" parseButtonRelease
             , testCase "parseDisconnect" parseDisconnect
-            , testCase "parseFileOpenedMessage" parseFileOpenedMessage
+            , testCase "parseFileOpened" parseFileOpened
             , testCase "parseGeometry" parseGeometry
             , testCase "parseInsert" parseInsert
-            , testCase "parseKeyCommandMessage" parseKeyCommandMessage
+            , testCase "parseKeyCommand" parseKeyCommand
             , testCase "parseKeyAtPos" parseKeyAtPos
             , testCase "parseKilled" parseKilled
-            , testCase "parseNewDotAndMarkMessage" parseNewDotAndMarkMessage
+            , testCase "parseNewDotAndMark" parseNewDotAndMark
             , testCase "parseRemove" parseRemove
             , testCase "parseSave" parseSave
-            , testCase "parseStartupDoneMessage" parseStartupDoneMessage
+            , testCase "parseStartupDone" parseStartupDone
             , testCase "parseUnmodified" parseUnmodified
-            , testCase "parseVersionMessage" parseVersionMessage
+            , testCase "parseVersion" parseVersion
             ]
         , testGroup "parseReply"
             [ testCase "parseGetCursorReply" parseGetCursorReply
@@ -41,13 +41,13 @@ tests = [ testGroup "parseNumber"
             , testCase "parseRemoveReplyError" parseRemoveReplyError
             ]
         , testGroup "printCommand"
-            [ testCase "printDisconnectMessage" printDisconnectMessage
-            , testCase "printDetachMessage" printDetachMessage
+            [ testCase "printDisconnect" printDisconnect
+            , testCase "printDetach" printDetach
             , testCase "printAddAnno" printAddAnno
             , testCase "printClose" printClose
-            , testCase "printCreateMessage" printCreateMessage
+            , testCase "printCreate" printCreate
             , testCase "printDefineAnnoType" printDefineAnnoType
-            , testCase "printEditFileMessage" printEditFileMessage
+            , testCase "printEditFile" printEditFile
             , testCase "printEndAtomic" printEndAtomic
             , testCase "printGuard" printGuard
             , testCase "printInitDone" printInitDone
@@ -63,7 +63,7 @@ tests = [ testGroup "parseNumber"
             , testCase "printSetExitDelay" printSetExitDelay
             , testCase "printSetFullName" printSetFullName
             , testCase "printSetModified" printSetModified
-            , testCase "printSetReadOnlyMessage" printSetReadOnlyMessage
+            , testCase "printSetReadOnly" printSetReadOnly
             , testCase "printSetTitle" printSetTitle
             , testCase "printSetVisible" printSetVisible
             , testCase "printShowBalloon" printShowBalloon

@@ -41,8 +41,8 @@ parseInsert = (Right $ N.EventMessage 0 1 $ N.InsertEvent 2 "text")
               @=?
               (N.parseMessage [] "0:insert=1 2 \"text\"")
 
-parseKeyCommandMessage :: Assertion
-parseKeyCommandMessage = (Right $ N.EventMessage 0 1 $ N.KeyCommand "F1")
+parseKeyCommand :: Assertion
+parseKeyCommand = (Right $ N.EventMessage 0 1 $ N.KeyCommand "F1")
                          @=?
                          (N.parseMessage [] "0:keyCommand=1 \"F1\"")
 
@@ -56,8 +56,8 @@ parseKilled = (Right $ N.EventMessage 0 1 $ N.Killed)
               @=?
               (N.parseMessage [] "0:killed=1")
 
-parseNewDotAndMarkMessage :: Assertion
-parseNewDotAndMarkMessage = (Right $ N.EventMessage 0 1 $ N.NewDotAndMark 3 4)
+parseNewDotAndMark :: Assertion
+parseNewDotAndMark = (Right $ N.EventMessage 0 1 $ N.NewDotAndMark 3 4)
                             @=?
                             (N.parseMessage [] "0:newDotAndMark=1 3 4")
 
@@ -71,8 +71,8 @@ parseSave = (Right $ N.EventMessage 0 1 $ N.SaveEvent)
             @=?
             (N.parseMessage [] "0:save=1")
 
-parseStartupDoneMessage :: Assertion
-parseStartupDoneMessage = (Right $ N.EventMessage 0 1 $ N.StartupDone)
+parseStartupDone :: Assertion
+parseStartupDone = (Right $ N.EventMessage 0 1 $ N.StartupDone)
                           @=?
                           (N.parseMessage [] "0:startupDone=1")
 
@@ -81,18 +81,18 @@ parseUnmodified = (Right $ N.EventMessage 0 1 $ N.Unmodified)
                   @=?
                   (N.parseMessage [] "0:unmodified=1")
 
-parseAuthMessage :: Assertion
-parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
+parseAuth :: Assertion
+parseAuth = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
                    (N.parseMessage [] "AUTH password")
 
-parseVersionMessage :: Assertion
-parseVersionMessage = (Right $ N.EventMessage 0 1 $ N.Version "2.5")
+parseVersion :: Assertion
+parseVersion = (Right $ N.EventMessage 0 1 $ N.Version "2.5")
                       @=?
                       (N.parseMessage [] "0:version=1 \"2.5\"")
 
-parseFileOpenedMessage :: Assertion
-parseFileOpenedMessage = (Right $ N.EventMessage 0 1 $ N.FileOpened
+parseFileOpened :: Assertion
+parseFileOpened = (Right $ N.EventMessage 0 1 $ N.FileOpened
                                                     "pathname" True False)
                          @=?
                          (N.parseMessage [] "0:fileOpened=1 \"pathname\" T F")
@@ -142,13 +142,13 @@ parseRemoveReplyError = (Right $ N.ReplyMessage 1 $ N.RemoveReplyError "error me
                         @=?
                         (N.parseMessage [(1, N.removeReplyParser)] "1 !error message")
 
-printDisconnectMessage :: Assertion
-printDisconnectMessage = "DISCONNECT\n"
+printDisconnect :: Assertion
+printDisconnect = "DISCONNECT\n"
                          @=?
                          (N.printMessage $ N.DisconnectCommand)
 
-printDetachMessage :: Assertion
-printDetachMessage = "DETACH\n"
+printDetach :: Assertion
+printDetach = "DETACH\n"
                      @=?
                      (N.printMessage $ N.Detach)
 
@@ -162,8 +162,8 @@ printClose = "0:close!1"
                @=?
                (N.printMessage $ N.CommandMessage 0 1 N.Close)
 
-printCreateMessage :: Assertion
-printCreateMessage = "0:create!1"
+printCreate :: Assertion
+printCreate = "0:create!1"
                      @=?
                      (N.printMessage $ N.CommandMessage 0 1 N.Create)
 
@@ -172,8 +172,8 @@ printDefineAnnoType = "0:defineAnnoType!1 2 \"typeName\" \"toolTip\" \"glyphFile
                      @=?
                      (N.printMessage $ N.CommandMessage 0 1 $ N.DefineAnnoType 2 "typeName" "toolTip" "glyphFile" N.Red N.Green)
 
-printEditFileMessage :: Assertion
-printEditFileMessage = "0:editFile!1 \"testfile.txt\""
+printEditFile :: Assertion
+printEditFile = "0:editFile!1 \"testfile.txt\""
                        @=?
                        (N.printMessage $ N.CommandMessage 0 1
                                                 $ N.EditFile "testfile.txt")
@@ -258,8 +258,8 @@ printSetModified = "0:setModified!1 T"
                     (N.printMessage $ N.CommandMessage 0 1
                                                     $ N.SetModified True)
 
-printSetReadOnlyMessage :: Assertion
-printSetReadOnlyMessage = "0:setReadOnly!1"
+printSetReadOnly :: Assertion
+printSetReadOnly = "0:setReadOnly!1"
                           @=?
                           (N.printMessage $ N.CommandMessage 0 1 N.SetReadOnly)
 
