@@ -71,6 +71,16 @@ parseSave = (Right $ N.EventMessage 0 1 $ N.SaveEvent)
             @=?
             (N.parseMessage [] "0:save=1")
 
+parseStartupDoneMessage :: Assertion
+parseStartupDoneMessage = (Right $ N.EventMessage 0 1 $ N.StartupDone)
+                          @=?
+                          (N.parseMessage [] "0:startupDone=1")
+
+parseUnmodified :: Assertion
+parseUnmodified = (Right $ N.EventMessage 0 1 $ N.Unmodified)
+                  @=?
+                  (N.parseMessage [] "0:unmodified=1")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
@@ -86,11 +96,6 @@ parseFileOpenedMessage = (Right $ N.EventMessage 0 1 $ N.FileOpened
                                                     "pathname" True False)
                          @=?
                          (N.parseMessage [] "0:fileOpened=1 \"pathname\" T F")
-
-parseStartupDoneMessage :: Assertion
-parseStartupDoneMessage = (Right $ N.EventMessage 0 1 $ N.StartupDone)
-                          @=?
-                          (N.parseMessage [] "0:startupDone=1")
 
 parseErrorMessage :: Assertion
 parseErrorMessage = (Right $ N.EventMessage (-1) (-1) $ N.E463)

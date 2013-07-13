@@ -84,6 +84,7 @@ data Event = BalloonText
                 Int -- len
            | SaveEvent
            | StartupDone
+           | Unmodified
            | Version
                 String
            | Auth String
@@ -288,6 +289,7 @@ eventParser bufId = char ':' >>
                 <|> try (removeParser bufId)
                 <|> try (saveParser bufId)
                 <|> try (startupDoneParser bufId)
+                <|> try (unmodifiedParser bufId)
                 <|> try (versionParser bufId))
 
 parseError :: Parser VimMessage
@@ -448,6 +450,12 @@ saveParser bufId = do
     string "save="
     seqNo <- parseNumber
     return $ EventMessage bufId seqNo $ SaveEvent
+
+unmodifiedParser :: BufId -> Parser VimMessage
+unmodifiedParser bufId = do
+    string "unmodified="
+    seqNo <- parseNumber
+    return $ EventMessage bufId seqNo $ Unmodified
 
 parseMessage :: ParserMap -> String -> Either String VimMessage
 parseMessage parserMap m = case parse (messageParser parserMap) "(unknown)" m of
