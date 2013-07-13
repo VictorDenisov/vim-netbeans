@@ -307,6 +307,11 @@ parseString = do
     string "\""
     return s
 
+parseBool :: Parser Bool
+parseBool = do
+    value <- oneOf "TF"
+    return $ value == 'T'
+
 balloonTextParser :: BufId -> Parser VimMessage
 balloonTextParser bufId = do
     string "balloonText="
@@ -340,10 +345,10 @@ fileOpenedParser bufId = do
     char ' '
     path <- parseString
     char ' '
-    open <- oneOf "TF"
+    open <- parseBool
     char ' '
-    modified <- oneOf "TF"
-    return $ EventMessage bufId seqN $ FileOpened path (open == 'T') (modified == 'T')
+    modified <- parseBool
+    return $ EventMessage bufId seqN $ FileOpened path open modified
 
 keyCommandParser :: BufId -> Parser VimMessage
 keyCommandParser bufId = do
