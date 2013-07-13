@@ -66,6 +66,11 @@ parseRemove = (Right $ N.EventMessage 0 1 $ N.RemoveEvent 2 3)
               @=?
               (N.parseMessage [] "0:remove=1 2 3")
 
+parseSave :: Assertion
+parseSave = (Right $ N.EventMessage 0 1 $ N.SaveEvent)
+            @=?
+            (N.parseMessage [] "0:save=1")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?

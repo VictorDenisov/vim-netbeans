@@ -82,6 +82,7 @@ data Event = BalloonText
            | RemoveEvent
                 Int -- off
                 Int -- len
+           | SaveEvent
            | StartupDone
            | Version
                 String
@@ -285,6 +286,7 @@ eventParser bufId = char ':' >>
                 <|> try (killedParser bufId)
                 <|> try (newDotAndMarkParser bufId)
                 <|> try (removeParser bufId)
+                <|> try (saveParser bufId)
                 <|> try (startupDoneParser bufId)
                 <|> try (versionParser bufId))
 
@@ -440,6 +442,12 @@ removeParser bufId = do
     char ' '
     len <- parseNumber
     return $ EventMessage bufId seqNo $ RemoveEvent off len
+
+saveParser :: BufId -> Parser VimMessage
+saveParser bufId = do
+    string "save="
+    seqNo <- parseNumber
+    return $ EventMessage bufId seqNo $ SaveEvent
 
 parseMessage :: ParserMap -> String -> Either String VimMessage
 parseMessage parserMap m = case parse (messageParser parserMap) "(unknown)" m of
