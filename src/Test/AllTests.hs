@@ -26,6 +26,11 @@ parseButtonRelease = (Right $ N.EventMessage 0 1 $ N.ButtonRelease 2 3 4)
                      @=?
                      (N.parseMessage [] "0:buttonRelease=1 2 3 4")
 
+parseDisconnect :: Assertion
+parseDisconnect = (Right $ N.EventMessage 0 1 $ N.Disconnect)
+                  @=?
+                  (N.parseMessage [] "0:disconnect=1")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?

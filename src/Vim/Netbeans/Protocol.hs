@@ -56,6 +56,7 @@ data Event = BalloonText
                 Int -- button
                 Int -- lnum
                 Int -- col
+           | Disconnect
            | FileOpened
                 String -- path
                 Bool -- open
@@ -261,6 +262,7 @@ eventParser :: BufId -> Parser VimMessage
 eventParser bufId = char ':' >>
                    (try (balloonTextParser bufId)
                 <|> try (buttonReleaseParser bufId)
+                <|> try (disconnectParser bufId)
                 <|> try (fileOpenedParser bufId)
                 <|> try (keyCommandParser bufId)
                 <|> try (newDotAndMarkParser bufId)
@@ -326,6 +328,12 @@ buttonReleaseParser bufId = do
     char ' '
     col <- parseNumber
     return $ EventMessage bufId seqNo $ ButtonRelease button lnum col
+
+disconnectParser :: BufId -> Parser VimMessage
+disconnectParser bufId = do
+    string "disconnect="
+    seqNo <- parseNumber
+    return $ EventMessage bufId seqNo $ Disconnect
 
 fileOpenedParser :: BufId -> Parser VimMessage
 fileOpenedParser bufId = do
