@@ -41,6 +41,16 @@ parseInsert = (Right $ N.EventMessage 0 1 $ N.InsertEvent 2 "text")
               @=?
               (N.parseMessage [] "0:insert=1 2 \"text\"")
 
+parseKeyCommandMessage :: Assertion
+parseKeyCommandMessage = (Right $ N.EventMessage 0 1 $ N.KeyCommand "F1")
+                         @=?
+                         (N.parseMessage [] "0:keyCommand=1 \"F1\"")
+
+parseKeyAtPos :: Assertion
+parseKeyAtPos = (Right $ N.EventMessage 0 1 $ N.KeyAtPos "F1" 2 3)
+                @=?
+                (N.parseMessage [] "0:keyAtPos=1 \"F1\" 2/3")
+
 parseAuthMessage :: Assertion
 parseAuthMessage = (Right $ N.EventMessage (-1) (-1) $ N.Auth "password")
                    @=?
@@ -56,11 +66,6 @@ parseFileOpenedMessage = (Right $ N.EventMessage 0 1 $ N.FileOpened
                                                     "pathname" True False)
                          @=?
                          (N.parseMessage [] "0:fileOpened=1 \"pathname\" T F")
-
-parseKeyCommandMessage :: Assertion
-parseKeyCommandMessage = (Right $ N.EventMessage 0 1 $ N.KeyCommand "F1")
-                         @=?
-                         (N.parseMessage [] "0:keyCommand=1 \"F1\"")
 
 parseNewDotAndMarkMessage :: Assertion
 parseNewDotAndMarkMessage = (Right $ N.EventMessage 0 1 $ N.NewDotAndMark 3 4)
