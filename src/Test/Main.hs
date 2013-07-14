@@ -1,5 +1,5 @@
 import Network.Socket.Internal (PortNumber(..))
-import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno, close)
+import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno, close, saveAndExit)
 import Vim.Netbeans.Protocol (Color(..))
 import Control.Monad.Trans (liftIO)
 import Network
@@ -13,6 +13,9 @@ main = runNetbeans (PortNumber 4444) "password" $ do
     liftIO $ putStrLn $ show a
     liftIO $ putStrLn $ show b
     liftIO $ putStrLn $ show l
+    saveAndExit
+    l1 <- getLength b
+    liftIO $ putStrLn $ show l1
     pollAllEvents
 
 pollAllEvents :: MonadIO m => Netbeans m ()
