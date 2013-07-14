@@ -388,8 +388,15 @@ remove bufId off len = do
 -- TODO it unclear how we should handle communication completion.
 saveAndExit :: MonadIO m => Netbeans m ()
 saveAndExit = do
-    sendFunction
-                0
-                P.SaveAndExit
-                P.saveAndExitReplyParser
+    seqNo <- popCommandNumber
+
+    hMVar <- connHandle `liftM` get
+    q <- messageQueue `liftM` get
+    mq <- liftIO $ atomically $ dupTChan q
+
+    let message = P.printMessage $ P.FunctionMessage 0 seqNo P.SaveAndExit
+
+    liftIO $ withMVar hMVar $ \h -> do
+        hPutStrLn h message
+        hFlush h
     return ()
