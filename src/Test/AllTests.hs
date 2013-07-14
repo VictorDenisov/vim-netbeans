@@ -11,6 +11,11 @@ parseNumber = case parse N.parseNumber "(unknown)" "123" of
                 Right n -> n @=? 123
                 Left _ -> assertFailure "parsing failure"
 
+parseString :: Assertion
+parseString = case parse N.parseString "(unknown)" "\"text\"" of
+                Right n -> n @=? "text"
+                Left _ -> assertFailure "parsing failure"
+
 parseNumberNegative :: Assertion
 parseNumberNegative = case parse N.parseNumber "(unknown)" "-12" of
                 Right n -> n @=? (-12)
