@@ -385,7 +385,6 @@ remove bufId off len = do
         P.RemoveReplySuccess -> return ()
         P.RemoveReplyError s -> throwError $ strMsg s
 
--- TODO it unclear how we should handle communication completion.
 saveAndExit :: MonadIO m => Netbeans m ()
 saveAndExit = do
     seqNo <- popCommandNumber
