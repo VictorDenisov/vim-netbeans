@@ -285,27 +285,6 @@ eventParser bufId = char ':' >>
                 <|> try (unmodifiedParser bufId)
                 <|> try (versionParser bufId))
 
-authParser :: Parser VimMessage
-authParser = do
-    string "AUTH "
-    s <- many1 anyChar
-    return $ EventMessage (-1) (-1) $ Auth s
-
-versionParser :: BufId -> Parser VimMessage
-versionParser bufId = do
-    string "version="
-    seqN <- parseNumber
-    string " \""
-    ver <- many1 (oneOf "0123456789.")
-    char '\"'
-    return $ EventMessage bufId seqN $ Version ver
-
-startupDoneParser :: BufId -> Parser VimMessage
-startupDoneParser bufId = do
-    string "startupDone="
-    seqN <- parseNumber
-    return $ EventMessage bufId seqN $ StartupDone
-
 parseString :: Parser String
 parseString = do
     string "\""
@@ -317,6 +296,12 @@ parseBool :: Parser Bool
 parseBool = do
     value <- oneOf "TF"
     return $ value == 'T'
+
+authParser :: Parser VimMessage
+authParser = do
+    string "AUTH "
+    s <- many1 anyChar
+    return $ EventMessage (-1) (-1) $ Auth s
 
 balloonTextParser :: BufId -> Parser VimMessage
 balloonTextParser bufId = do
@@ -432,11 +417,26 @@ saveParser bufId = do
     seqNo <- parseNumber
     return $ EventMessage bufId seqNo $ SaveEvent
 
+startupDoneParser :: BufId -> Parser VimMessage
+startupDoneParser bufId = do
+    string "startupDone="
+    seqN <- parseNumber
+    return $ EventMessage bufId seqN $ StartupDone
+
 unmodifiedParser :: BufId -> Parser VimMessage
 unmodifiedParser bufId = do
     string "unmodified="
     seqNo <- parseNumber
     return $ EventMessage bufId seqNo $ Unmodified
+
+versionParser :: BufId -> Parser VimMessage
+versionParser bufId = do
+    string "version="
+    seqN <- parseNumber
+    string " \""
+    ver <- many1 (oneOf "0123456789.")
+    char '\"'
+    return $ EventMessage bufId seqN $ Version ver
 
 parseMessage :: ParserMap -> String -> Either String VimMessage
 parseMessage parserMap m = case parse (messageParser parserMap) "(unknown)" m of
