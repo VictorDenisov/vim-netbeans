@@ -87,10 +87,10 @@ data ConnState = ConnState
     }
 
 runNetbeans :: (Error e, MonadIO m, MonadError e m)
-    => PortID -- ^ Port.
-    -> String
-    -> Netbeans m () -- ^ Monad to run.
-    -> m () -- ^ Internal monad.
+    => PortID -- ^ Port
+    -> String -- ^ Expected password
+    -> Netbeans m () -- ^ Monad to run
+    -> m () -- ^ Internal monad
 runNetbeans port password vm = do
     s <- liftIO $ listenOn port
     (handleC, hostC, portC) <- liftIO $ accept s
@@ -141,6 +141,8 @@ messageReader pm h q = do
                 putMVar pm m1
                 atomically $ writeTChan q funcMsg
 
+{- | Returns next event from the event queue. Blocks if no events available
+at the moment. -}
 nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
     q <- messageQueue `liftM` get
@@ -149,6 +151,8 @@ nextEvent = do
         P.EventMessage bufId seqNo event -> return (bufId, event)
         P.ReplyMessage _ _ -> nextEvent
 
+{- | Returns Just next event from the event queue or Nothing if no events
+available. -}
 tryNextEvent :: MonadIO m => Netbeans m (Maybe (P.BufId, P.Event))
 tryNextEvent = do
     q <- messageQueue `liftM` get
@@ -231,15 +235,18 @@ sendFunction bufId funcMsg parser = do
     reply <- takeReply mq seqNo
     return reply
 
-addAnno :: MonadIO m => P.BufId
-                     -> P.AnnoTypeNum
-                     -> Int
-                     -> Netbeans m P.AnnoNum
+-- | Place an annotation in the buffer.
+addAnno :: MonadIO m => P.BufId -- ^ buffer id where to place the annotation
+                     -> P.AnnoTypeNum -- ^ id of annotation type
+                     -> Int -- ^ offset of the annotation
+                     -> Netbeans m P.AnnoNum -- ^ id of the placed annotation
 addAnno bufId typeNum off = do
     annoId <- popAnnoNum
     sendCommand bufId $ P.AddAnno annoId typeNum off 0
     return annoId
 
+{- | Close the buffer. This leaves us without current buffer, very dangerous to
+use -}
 close :: MonadIO m => P.BufId -> Netbeans m ()
 close bufId =
     sendCommand bufId $ P.Close
