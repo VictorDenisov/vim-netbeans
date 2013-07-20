@@ -1,4 +1,54 @@
 module Vim.Netbeans
+( Netbeans
+, runNetbeans
+, P.Event(..)
+, P.BufId
+, P.Color
+, P.AnnoTypeNum
+, P.AnnoNum
+, nextEvent
+, tryNextEvent
+-- commands
+, addAnno
+, close
+, create
+, defineAnnoType
+, editFile
+, endAtomic
+, guard
+, initDone
+, insertDone
+, setNetbeansBuffer
+, putBufferNumber
+, raise
+, removeAnno
+, save
+, saveDone
+, setBufferNumber
+, setDot
+, setExitDelay
+, setFullName
+, setModified
+, setReadonly
+, setTitle
+, setVisible
+, showBalloon
+, specialKeys
+, startAtomic
+, startDocumentListen
+, stopDocumentListen
+, unguard
+-- functions
+, getCursor
+, getLength
+, getAnno
+, getModified
+, getModifiedBuffer
+, getText
+, insert
+, remove
+, saveAndExit
+)
 where
 
 import GHC.IO.Handle (Handle, hClose, hSetBinaryMode, hPutStr, hFlush)
