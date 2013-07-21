@@ -186,7 +186,7 @@ popBufferId = do
     let bufNumberMVar = bufNumber st
     bufNo <- liftIO $ takeMVar bufNumberMVar
     liftIO $ putMVar bufNumberMVar (bufNo + 1)
-    return bufNo
+    return $ P.BufId bufNo
 
 popAnnoTypeNum :: MonadIO m => Netbeans m P.AnnoTypeNum
 popAnnoTypeNum = do
@@ -403,7 +403,7 @@ setDot bufId off =
 
 setExitDelay :: MonadIO m => Int -> Netbeans m ()
 setExitDelay seconds =
-    sendCommand 0 $ P.SetExitDelay seconds
+    sendCommand (P.BufId 0) $ P.SetExitDelay seconds
 
 setFullName :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setFullName bufId pathname =
@@ -452,7 +452,7 @@ unguard bufId off len =
 getCursor :: MonadIO m => Netbeans m (P.BufId, Int, Int, Int)
 getCursor = do
     P.GetCursorReply bufId lnum col off <- sendFunction
-                                                    0
+                                                    (P.BufId 0)
                                                     P.GetCursor
                                                     P.getCursorReplyParser
     return (bufId, lnum, col, off)
@@ -476,7 +476,7 @@ getAnno bufId serNum = do
 getModified :: MonadIO m => Netbeans m Int
 getModified = do
     P.GetModifiedReply count <- sendFunction
-                                    0
+                                    (P.BufId 0)
                                     P.GetModified
                                     P.getModifiedReplyParser
     return count
@@ -527,7 +527,7 @@ saveAndExit = do
     q <- messageQueue `liftM` get
     mq <- liftIO $ atomically $ dupTChan q
 
-    let message = P.printMessage $ P.FunctionMessage 0 seqNo P.SaveAndExit
+    let message = P.printMessage $ P.FunctionMessage (P.BufId 0) seqNo P.SaveAndExit
 
     liftIO $ withMVar hMVar $ \h -> do
         hPutStrLn h message

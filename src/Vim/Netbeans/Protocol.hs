@@ -178,7 +178,14 @@ data Command = AddAnno
                 Int -- len
                deriving (Eq, Show)
 
-type BufId = Int
+newtype BufId = BufId Int
+
+instance Show BufId where
+    show (BufId x) = show x
+
+instance Eq BufId where
+    (BufId x) == (BufId y) = x == y
+
 type AnnoTypeNum = Int
 type AnnoNum = Int
 
@@ -199,7 +206,7 @@ messageParser parserMap = try authParser
 regularMessageParser :: ParserMap -> Parser VimMessage
 regularMessageParser parserMap = do
     num <- parseNumber
-    try (eventParser num) <|> replyParser num parserMap
+    try (eventParser (BufId num)) <|> replyParser num parserMap
 
 replyParser :: Int -> ParserMap -> Parser VimMessage
 replyParser seqno parserMap = do
@@ -217,7 +224,7 @@ getCursorReplyParser = do
     col <- parseNumber
     char ' '
     off <- parseNumber
-    return $ GetCursorReply bufId lnum col off
+    return $ GetCursorReply (BufId bufId) lnum col off
 
 getLengthReplyParser :: Parser Reply
 getLengthReplyParser = do
@@ -297,7 +304,7 @@ authParser :: Parser VimMessage
 authParser = do
     string "AUTH "
     s <- many1 anyChar
-    return $ EventMessage (-1) (-1) $ Auth s
+    return $ EventMessage (BufId (-1)) (-1) $ Auth s
 
 balloonTextParser :: BufId -> Parser VimMessage
 balloonTextParser bufId = do
