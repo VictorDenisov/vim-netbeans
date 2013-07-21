@@ -320,14 +320,26 @@ endAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 endAtomic bufId =
     sendCommand bufId $ P.EndAtomic
 
-guard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
+{- | Mark an area in the buffer as guarded.  This means it cannot be edited.
+off and len are numbers and specify the text to be guarded.
+-}
+guard :: MonadIO m => P.BufId -- ^ buffer id
+                   -> Int -- ^ off
+                   -> Int -- ^ len
+                   -> Netbeans m ()
 guard bufId off len =
     sendCommand bufId $ P.Guard off len
 
+{- | Mark the buffer as ready for use. Implicitly makes the buffer the current
+buffer. Fires the BufReadPost autocommand event. -}
 initDone :: MonadIO m => P.BufId -> Netbeans m ()
 initDone bufId =
     sendCommand bufId $ P.InitDone
 
+{- | Sent by Vim Controller to tell Vim an initial file insert is done.
+This triggers a read message being printed.  Prior to protocol version 2.3,
+no read messages were displayed after opening a file.
+New in protocol version 2.3. -}
 insertDone :: MonadIO m => P.BufId -> Netbeans m ()
 insertDone bufId =
     sendCommand bufId $ P.InsertDone
