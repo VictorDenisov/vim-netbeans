@@ -15,8 +15,16 @@ main = runNetbeans (PortNumber 4444) "password" $ do
     startAtomic b
     insert b 1 "############"
     insert b 2 "---------------"
+    liftIO $ putStrLn "Before endAtomic"
     liftIO $ getLine
     endAtomic b
+    liftIO $ putStrLn "After endAtomic"
+    liftIO $ getLine
+    setNetbeansBuffer b
+    liftIO $ putStrLn "After setNetbeans true"
+    liftIO $ getLine
+    clearNetbeansBuffer b
+    liftIO $ putStrLn "After setNetbeans false"
     liftIO $ getLine
     saveAndExit
     pollAllEvents

@@ -19,6 +19,7 @@ module Vim.Netbeans
 , initDone
 , insertDone
 , setNetbeansBuffer
+, clearNetbeansBuffer
 , putBufferNumber
 , raise
 , removeAnno
@@ -339,14 +340,25 @@ initDone bufId =
 {- | Sent by Vim Controller to tell Vim an initial file insert is done.
 This triggers a read message being printed.  Prior to protocol version 2.3,
 no read messages were displayed after opening a file.
+
 New in protocol version 2.3. -}
 insertDone :: MonadIO m => P.BufId -> Netbeans m ()
 insertDone bufId =
     sendCommand bufId $ P.InsertDone
 
-setNetbeansBuffer :: MonadIO m => P.BufId -> Bool ->  Netbeans m ()
-setNetbeansBuffer bufId isNetbeansBuffer =
-    sendCommand bufId $ P.NetbeansBuffer isNetbeansBuffer
+{- | After invocation the buffer is owned by netbeans.
+
+New in protocol version 2.2 -}
+setNetbeansBuffer :: MonadIO m => P.BufId -> Netbeans m ()
+setNetbeansBuffer bufId =
+    sendCommand bufId $ P.NetbeansBuffer True
+
+{- | Clears netbeans' ownership of the buffer.
+
+New in protocol version 2.2 -}
+clearNetbeansBuffer :: MonadIO m => P.BufId -> Netbeans m ()
+clearNetbeansBuffer bufId =
+    sendCommand bufId $ P.NetbeansBuffer False
 
 putBufferNumber :: MonadIO m => P.BufId -> String -> Netbeans m ()
 putBufferNumber bufId pathname =
