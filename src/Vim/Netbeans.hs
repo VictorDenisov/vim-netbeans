@@ -360,9 +360,20 @@ clearNetbeansBuffer :: MonadIO m => P.BufId -> Netbeans m ()
 clearNetbeansBuffer bufId =
     sendCommand bufId $ P.NetbeansBuffer False
 
-putBufferNumber :: MonadIO m => P.BufId -> String -> Netbeans m ()
-putBufferNumber bufId pathname =
+{- | Associate a buffer number with the Vim buffer by the name
+pathname, a string argument.  To be used when the editor
+reported editing another file to the IDE and the IDE needs to
+tell the editor what buffer number it will use for this file.
+Also marks the buffer as initialized.
+
+New in version 2.1.
+-}
+putBufferNumber :: MonadIO m => String -- ^ pathname
+                             -> Netbeans m P.BufId -- ^ buffer id
+putBufferNumber pathname = do
+    bufId <- popBufferId
     sendCommand bufId $ P.PutBufferNumber pathname
+    return bufId
 
 raise :: MonadIO m => P.BufId -> Netbeans m ()
 raise bufId =
