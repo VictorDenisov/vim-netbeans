@@ -251,29 +251,72 @@ close :: MonadIO m => P.BufId -> Netbeans m ()
 close bufId =
     sendCommand bufId $ P.Close
 
+{- | Creates a buffer without a name. Replaces the current buffer. (it's hidden
+when it was changed). The Vim Controller should use this as the first command
+for a file that is being opened.  The sequence of commands could be:
+
+    * create
+
+    * setModified             (no effect)
+
+    * startDocumentListen
+
+    * setTitle
+
+    * setFullName
+-}
 create :: MonadIO m => P.BufId -> Netbeans m ()
 create bufId =
     sendCommand bufId $ P.Close
+{- | Define a type of annotation for this buffer.
+Vim will define a sign for the annotation.
+When \"glyphFile\" is empty, no text sign is used (new in protocol version 2.1).
+When \"glyphFile\" is one or two characters long, a text sign is defined
+(new in protocol version 2.1).
 
-defineAnnoType :: MonadIO m => P.BufId
-                            -> String
-                            -> String
-                            -> String
-                            -> P.Color
-                            -> P.Color
-                            -> Netbeans m P.AnnoTypeNum
+Note: the annotations will be defined in sequence, and the annotation type
+number is later used with addAnno.
+-}
+defineAnnoType :: MonadIO m => P.BufId -- ^ buffer id
+                            -> String  -- ^ type name
+                            -> String  -- ^ tooltip
+                            -> String  -- ^ glyph file
+                            -> P.Color -- ^ fg
+                            -> P.Color -- ^ bg
+                            -> Netbeans m P.AnnoTypeNum -- ^ type num
 defineAnnoType bufId typeName toolTip glyphFile fg bg = do
     annoTypeId <- popAnnoTypeNum
     sendCommand bufId $
                     P.DefineAnnoType annoTypeId typeName toolTip glyphFile fg bg
     return annoTypeId
 
-editFile :: MonadIO m => String -> Netbeans m P.BufId
+{- | Set the name for the buffer and edit the file path, a string argument.
+Normal way for the IDE to tell the editor to edit a file.
+
+It will trigger an event fileOpened with a bufId of 0 but the buffer
+has been assigned.
+
+If the IDE is going to pass the file text to the editor use these commands
+instead:
+
+    * setFullName
+
+    * insert
+
+    * initDone
+
+New in version 2.1.
+-}
+editFile :: MonadIO m => String -- ^ file path
+                      -> Netbeans m P.BufId -- ^ assigned buffer id
 editFile path = do
     bufId <- popBufferId
     sendCommand bufId $ P.EditFile path
     return bufId
 
+{- | End an atomic operation. The changes between startAtomic and endAtomic
+can be undone as one operation.  But it's not implemented yet.
+Redraw when necessary. -}
 endAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 endAtomic bufId =
     sendCommand bufId $ P.EndAtomic
