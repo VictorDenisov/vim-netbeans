@@ -1,21 +1,24 @@
 import Network.Socket.Internal (PortNumber(..))
-import Vim.Netbeans (Netbeans, runNetbeans, getLength, getCursor, getAnno, editFile, nextEvent, tryNextEvent, defineAnnoType, addAnno, close, saveAndExit)
-import Vim.Netbeans.Protocol (Color(..))
+import Vim.Netbeans
 import Control.Monad.Trans (liftIO)
 import Network
 import Control.Monad.IO.Class (MonadIO)
 
 main = runNetbeans (PortNumber 4444) "password" $ do
-    b <- editFile "README"
+    b <- editFile "ttt"
     l <- getLength b
     a <- defineAnnoType b "myTypeName" "" "=>" Red Blue
     an <- addAnno b a 1
     liftIO $ putStrLn $ show a
     liftIO $ putStrLn $ show b
     liftIO $ putStrLn $ show l
+    startAtomic b
+    insert b 1 "############"
+    insert b 2 "---------------"
+    liftIO $ getLine
+    endAtomic b
+    liftIO $ getLine
     saveAndExit
-    l1 <- getLength b
-    liftIO $ putStrLn $ show l1
     pollAllEvents
 
 pollAllEvents :: MonadIO m => Netbeans m ()

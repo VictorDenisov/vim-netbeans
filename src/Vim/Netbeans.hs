@@ -3,7 +3,7 @@ module Vim.Netbeans
 , runNetbeans
 , P.Event(..)
 , P.BufId
-, P.Color
+, P.Color(..)
 , P.AnnoTypeNum
 , P.AnnoNum
 , nextEvent
@@ -314,9 +314,8 @@ editFile path = do
     sendCommand bufId $ P.EditFile path
     return bufId
 
-{- | End an atomic operation. The changes between startAtomic and endAtomic
-can be undone as one operation.  But it's not implemented yet.
-Redraw when necessary. -}
+{- | End an atomic operation. After startAtomic the screen is not changed until
+endAtomic. Redraws the screen when necessary. -}
 endAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 endAtomic bufId =
     sendCommand bufId $ P.EndAtomic
