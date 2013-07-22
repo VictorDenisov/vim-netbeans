@@ -30,6 +30,7 @@ module Vim.Netbeans
 , setExitDelay
 , setFullName
 , setModified
+, setUnmodified
 , setReadonly
 , setTitle
 , setVisible
@@ -468,9 +469,15 @@ setFullName :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setFullName bufId pathname =
     sendCommand bufId $ P.SetFullName pathname
 
-setModified :: MonadIO m => P.BufId -> Bool -> Netbeans m ()
-setModified bufId modified =
-    sendCommand bufId $ P.SetModified modified
+-- | Mark the buffer as modified.
+setModified :: MonadIO m => P.BufId -> Netbeans m ()
+setModified bufId =
+    sendCommand bufId $ P.SetModified True
+
+-- | Mark the buffer as unmodified.
+setUnmodified :: MonadIO m => P.BufId -> Netbeans m ()
+setUnmodified bufId =
+    sendCommand bufId $ P.SetModified False
 
 setReadonly :: MonadIO m => P.BufId -> Netbeans m ()
 setReadonly bufId =
