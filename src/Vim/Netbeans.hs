@@ -381,28 +381,68 @@ putBufferNumber pathname = do
     sendCommand bufId $ P.PutBufferNumber pathname
     return bufId
 
+{- | Bring the editor to the foreground. Only when Vim is run with GUI.
+
+New in protocol version 2.1 -}
 raise :: MonadIO m => P.BufId -> Netbeans m ()
 raise bufId =
     sendCommand bufId $ P.Raise
 
+{- | Remove a previously placed annotation for this buffer.
+serNum is the same number used in addAnno. -}
 removeAnno :: MonadIO m => P.BufId -> P.AnnoNum -> Netbeans m ()
 removeAnno bufId annoNum =
     sendCommand bufId $ P.RemoveAnno annoNum
 
+{- | Save the buffer when it was modified.  The other side of the
+interface is expected to write the buffer and invoke setModified to reset
+the changed flag of the buffer. The writing is skipped when one of these
+conditions is true:
+
+* 'write' is not set
+
+* the buffer is read-only
+
+* the buffer does not have a file name
+
+* 'buftype' disallows writing
+
+New in version 2.2.
+-}
 save :: MonadIO m => P.BufId -> Netbeans m ()
 save bufId =
     sendCommand bufId $ P.Save
 
+{- | Sent by Vim Controller to tell Vim a save is done.  This triggers a save
+message being printed. Prior to protocol version 2.3, no save messages were
+displayed after a save.
+
+New in protocol version 2.3.
+-}
 saveDone :: MonadIO m => P.BufId -> Netbeans m ()
 saveDone bufId =
     sendCommand bufId $ P.SaveDone
 
+{- | Associate a buffer number with Vim buffer by the name pathname.
+To be used when the editor reported editing another file to the IDE and
+the IDE needs to tell the editor what buffer number it will use for this file.
+Has the side effect of making the buffer the current buffer.
+See putBufferNumber for a more useful command.
+-}
 setBufferNumber :: MonadIO m => String -> Netbeans m P.BufId
 setBufferNumber pathname = do
     bufId <- popBufferId
     sendCommand bufId $ P.SetBufferNumber pathname
     return bufId
 
+{- | Make the buffer the current buffer and set the cursor at the specified
+position.  If the buffer is open in another window than make that window the
+current window. If there are folds they are opened to make the cursor
+line visible.
+
+In protocol version 2.1 lnum/col can be used instead of off.
+However this function doesn't support lnum/col.
+-}
 setDot :: MonadIO m => P.BufId -> Int -> Netbeans m ()
 setDot bufId off =
     sendCommand bufId $ P.SetDot off
