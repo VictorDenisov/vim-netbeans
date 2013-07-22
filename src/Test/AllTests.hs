@@ -161,7 +161,7 @@ printAddAnno :: Assertion
 printAddAnno = "0:addAnno!1 2 3 10 5"
                @=?
                (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $
-                                            N.AddAnno 2 (N.AnnoTypeNum 3) 10 5)
+                                            N.AddAnno (N.AnnoNum 2) (N.AnnoTypeNum 3) 10 5)
 
 printClose :: Assertion
 printClose = "0:close!1"
@@ -231,7 +231,7 @@ printRaise = "0:raise!1"
 printRemoveAnno :: Assertion
 printRemoveAnno = "0:removeAnno!1 3"
                   @=?
-                  (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $ N.RemoveAnno 3)
+                  (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $ N.RemoveAnno (N.AnnoNum 3))
 
 printSave :: Assertion
 printSave = "0:save!1"

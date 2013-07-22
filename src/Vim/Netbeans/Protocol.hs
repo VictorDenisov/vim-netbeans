@@ -122,7 +122,7 @@ data Color = Red
              deriving (Eq, Show)
 
 data Command = AddAnno
-                Int -- serNum
+                AnnoNum -- serNum
                 AnnoTypeNum -- typeNum
                 Int -- off
                 Int -- len
@@ -149,7 +149,7 @@ data Command = AddAnno
                 String -- isNetbeansBuffer
              | Raise
              | RemoveAnno
-                Int -- serNum
+                AnnoNum -- serNum
              | Save
              | SaveDone
              | SetBufferNumber
@@ -194,7 +194,13 @@ instance Show AnnoTypeNum where
 instance Eq AnnoTypeNum where
     (AnnoTypeNum x) == (AnnoTypeNum y) = x == y
 
-type AnnoNum = Int
+newtype AnnoNum = AnnoNum Int
+
+instance Show AnnoNum where
+    show (AnnoNum v) = show v
+
+instance Eq AnnoNum where
+    (AnnoNum x) == (AnnoNum y) = x == y
 
 type ParserMap = [(Int, Parser Reply)]
 

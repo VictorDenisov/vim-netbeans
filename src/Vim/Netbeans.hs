@@ -202,7 +202,7 @@ popAnnoNum = do
     let annoMVar = annoNumber st
     annoNo <- liftIO $ takeMVar annoMVar
     liftIO $ putMVar annoMVar (annoNo + 1)
-    return annoNo
+    return $ P.AnnoNum annoNo
 
 sendCommand :: MonadIO m => P.BufId -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
