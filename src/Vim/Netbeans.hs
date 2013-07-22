@@ -194,7 +194,7 @@ popAnnoTypeNum = do
     let annoMVar = annoTypeNumber st
     annoNo <- liftIO $ takeMVar annoMVar
     liftIO $ putMVar annoMVar (annoNo + 1)
-    return annoNo
+    return $ P.AnnoTypeNum annoNo
 
 popAnnoNum :: MonadIO m => Netbeans m P.AnnoNum
 popAnnoNum = do
@@ -288,8 +288,14 @@ defineAnnoType :: MonadIO m => P.BufId -- ^ buffer id
 defineAnnoType bufId typeName toolTip glyphFile fg bg = do
     annoTypeId <- popAnnoTypeNum
     sendCommand bufId $
-                    P.DefineAnnoType annoTypeId typeName toolTip glyphFile fg bg
-    return annoTypeId
+                    P.DefineAnnoType
+                            annoTypeId
+                            typeName
+                            toolTip
+                            glyphFile
+                            fg
+                            bg
+    return $ annoTypeId
 
 {- | Set the name for the buffer and edit the file path, a string argument.
 Normal way for the IDE to tell the editor to edit a file.

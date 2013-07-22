@@ -160,7 +160,8 @@ printDetach = "DETACH\n"
 printAddAnno :: Assertion
 printAddAnno = "0:addAnno!1 2 3 10 5"
                @=?
-               (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $ N.AddAnno 2 3 10 5)
+               (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $
+                                            N.AddAnno 2 (N.AnnoTypeNum 3) 10 5)
 
 printClose :: Assertion
 printClose = "0:close!1"
@@ -175,7 +176,14 @@ printCreate = "0:create!1"
 printDefineAnnoType :: Assertion
 printDefineAnnoType = "0:defineAnnoType!1 2 \"typeName\" \"toolTip\" \"glyphFile\" Red Green"
                      @=?
-                     (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $ N.DefineAnnoType 2 "typeName" "toolTip" "glyphFile" N.Red N.Green)
+                     (N.printMessage $ N.CommandMessage (N.BufId 0) 1 $
+                                              N.DefineAnnoType
+                                                    (N.AnnoTypeNum 2)
+                                                    "typeName"
+                                                    "toolTip"
+                                                    "glyphFile"
+                                                    N.Red
+                                                    N.Green)
 
 printEditFile :: Assertion
 printEditFile = "0:editFile!1 \"testfile.txt\""

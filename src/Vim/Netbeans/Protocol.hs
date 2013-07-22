@@ -123,13 +123,13 @@ data Color = Red
 
 data Command = AddAnno
                 Int -- serNum
-                Int -- typeNum
+                AnnoTypeNum -- typeNum
                 Int -- off
                 Int -- len
              | Close
              | Create
              | DefineAnnoType
-                Int -- typeNum
+                AnnoTypeNum -- typeNum
                 String -- typeName
                 String -- toolTip
                 String -- glyphFile
@@ -186,7 +186,14 @@ instance Show BufId where
 instance Eq BufId where
     (BufId x) == (BufId y) = x == y
 
-type AnnoTypeNum = Int
+newtype AnnoTypeNum = AnnoTypeNum Int
+
+instance Show AnnoTypeNum where
+    show (AnnoTypeNum v) = show v
+
+instance Eq AnnoTypeNum where
+    (AnnoTypeNum x) == (AnnoTypeNum y) = x == y
+
 type AnnoNum = Int
 
 type ParserMap = [(Int, Parser Reply)]
