@@ -447,10 +447,23 @@ setDot :: MonadIO m => P.BufId -> Int -> Netbeans m ()
 setDot bufId off =
     sendCommand bufId $ P.SetDot off
 
+{- | Set the delay for exiting to seconds, a number.  This delay is used to
+give the IDE a chance to handle things before really exiting.
+The default delay is two seconds.
+
+New in protocol version 2.1.
+
+Obsolete in protocol version 2.3.
+-}
 setExitDelay :: MonadIO m => Int -> Netbeans m ()
 setExitDelay seconds =
     sendCommand (P.BufId 0) $ P.SetExitDelay seconds
 
+{- | Set the file name to be used for a buffer to pathname, a string argument.
+Used when the IDE wants to edit a file under control of the IDE.
+This makes the buffer the current buffer, but does not read the file.
+insert commands will be used next to set the contents.
+-}
 setFullName :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setFullName bufId pathname =
     sendCommand bufId $ P.SetFullName pathname
