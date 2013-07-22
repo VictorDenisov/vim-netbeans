@@ -479,50 +479,94 @@ setUnmodified :: MonadIO m => P.BufId -> Netbeans m ()
 setUnmodified bufId =
     sendCommand bufId $ P.SetModified False
 
+{- | Set a file as readonly.
+
+New in protocol version 2.3.
+-}
 setReadonly :: MonadIO m => P.BufId -> Netbeans m ()
 setReadonly bufId =
     sendCommand bufId $ P.SetReadOnly
 
+{- | Set the title for the buffer to name, a string argument. The title is
+only used for the Vim Controller functions, not by Vim.
+-}
 setTitle :: MonadIO m => P.BufId -> String -> Netbeans m ()
 setTitle bufId name =
     sendCommand bufId $ P.SetTitle name
 
-setVisible :: MonadIO m => P.BufId -> Bool -> Netbeans m ()
-setVisible bufId visible =
-    sendCommand bufId $ P.SetVisible visible
+-- | Go to the buffer.
+setVisible :: MonadIO m => P.BufId -> Netbeans m ()
+setVisible bufId =
+    sendCommand bufId $ P.SetVisible True
 
+{- | Show a balloon (popup window) at the mouse pointer position, containing
+text, a string argument. The balloon should disappear when the mouse is moved
+more than a few pixels. Only when Vim is run with a GUI.
+
+New in protocol version 2.1.
+-}
 showBalloon :: MonadIO m => P.BufId -> String -> Netbeans m ()
 showBalloon bufId text =
     sendCommand bufId $ P.ShowBalloon text
 
+{- | Map a set of keys (mostly function keys) to be passed back to the Vim
+Controller for processing.  This lets regular IDE hotkeys be used from Vim.
+
+Implemented in protocol version 2.3.
+-}
 specialKeys :: MonadIO m => P.BufId -> Netbeans m ()
 specialKeys bufId =
     sendCommand bufId $ P.SpecialKeys
 
+{- | Begin an atomic operation. The screen will not be updated until
+endAtomic is given.
+-}
 startAtomic :: MonadIO m => P.BufId -> Netbeans m ()
 startAtomic bufId =
     sendCommand bufId $ P.StartAtomic
 
+{- | Mark the buffer to report changes to the IDE with the insert and
+remove events.  The default is to report changes.
+-}
 startDocumentListen :: MonadIO m => P.BufId -> Netbeans m ()
 startDocumentListen bufId =
     sendCommand bufId $ P.StartDocumentListen
 
+{- | Mark the buffer to stop reporting changes to the IDE. Opposite of
+startDocumentListen. NOTE: if netbeansBuffer was used to mark this buffer as a
+NetBeans buffer, then the buffer is deleted in Vim. This is for compatibility
+with Sun Studio 10.
+-}
 stopDocumentListen :: MonadIO m => P.BufId -> Netbeans m ()
 stopDocumentListen bufId =
     sendCommand bufId $ P.StopDocumentListen
 
+{- | Opposite of guard, remove guarding for a text area. Also sets the
+current buffer, if necessary. -}
 unguard :: MonadIO m => P.BufId -> Int -> Int -> Netbeans m ()
 unguard bufId off len =
     sendCommand bufId $ P.Unguard off len
 
+{- | Return the current buffer and cursor position.
+
+bufID = buffer ID of the current buffer (if this is unknown -1 is used)
+lnum  = line number of the cursor (first line is one)
+col   = column number of the cursor (in bytes, zero based)
+off   = offset of the cursor in the buffer (in bytes)
+
+New in version 2.1.
+-}
 getCursor :: MonadIO m => Netbeans m (P.BufId, Int, Int, Int)
 getCursor = do
     P.GetCursorReply bufId lnum col off <- sendFunction
                                                     (P.BufId 0)
                                                     P.GetCursor
                                                     P.getCursorReplyParser
+    -- TODO clarify situation with -1 buf id
     return (bufId, lnum, col, off)
 
+
+-- | Return the length of the buffer in bytes.
 getLength :: MonadIO m => P.BufId -> Netbeans m Int
 getLength bufId = do
     P.GetLengthReply value <- sendFunction
@@ -531,6 +575,7 @@ getLength bufId = do
                                     P.getLengthReplyParser
     return value
 
+-- | Return the line number of the annotation in the buffer.
 getAnno :: MonadIO m => P.BufId -> Int -> Netbeans m Int
 getAnno bufId serNum = do
     P.GetAnnoReply lnum <- sendFunction
@@ -539,6 +584,11 @@ getAnno bufId serNum = do
                               P.getAnnoReplyParser
     return lnum
 
+{- | Return the number of buffers with changes.
+When the result is zero it's safe to tell Vim to exit.
+
+New in protocol version 2.1.
+-}
 getModified :: MonadIO m => Netbeans m Int
 getModified = do
     P.GetModifiedReply count <- sendFunction
@@ -547,6 +597,11 @@ getModified = do
                                     P.getModifiedReplyParser
     return count
 
+{- | Return zero if the buffer does not have changes,
+one if it does have changes.  
+
+New in protocol version 2.1.
+-}
 getModifiedBuffer :: MonadIO m => P.BufId -> Netbeans m Bool
 getModifiedBuffer bufId = do
     P.GetModifiedReply count <- sendFunction
@@ -554,9 +609,10 @@ getModifiedBuffer bufId = do
                                     P.GetModified
                                     P.getModifiedReplyParser
     return $ case count of
-        0 -> True
-        _ -> False
+        0 -> False
+        _ -> True
 
+-- | Return the contents of the buffer as a string.
 getText :: MonadIO m => P.BufId -> Netbeans m String
 getText bufId = do
     P.GetTextReply text <- sendFunction
@@ -565,6 +621,15 @@ getText bufId = do
                                 P.getTextReplyParser
     return text
 
+{- | Insert text before position off. text is a string argument, off a number.
+text should have a \\n (newline) at the end of each line. Or \\r\\n when
+fileformat is dos.  When using insert in an empty buffer Vim will set
+fileformat accordingly. When off points to the start of a line the text is
+inserted above this line. Thus when off is zero lines are inserted before
+the first line. When off points after the start of a line, possibly on the
+NUL at the end of a line, the first line of text is appended to this line.
+Further lines come below it.
+-}
 insert :: (Error e, MonadIO m, MonadError e m) => P.BufId -> Int -> String -> Netbeans m ()
 insert bufId off text = do
     replyMessage <- sendFunction
@@ -575,6 +640,7 @@ insert bufId off text = do
         P.InsertReplySuccess -> return ()
         P.InsertReplyError s -> throwError $ strMsg s
 
+-- | Delete length bytes of text at position off. Both arguments are numbers.
 remove :: (Error e, MonadIO m, MonadError e m) => P.BufId -> Int -> Int -> Netbeans m ()
 remove bufId off len = do
     replyMessage <- sendFunction
@@ -585,6 +651,14 @@ remove bufId off len = do
         P.RemoveReplySuccess -> return ()
         P.RemoveReplyError s -> throwError $ strMsg s
 
+{- | Perform the equivalent of closing Vim: :confirm qall. If there are
+no changed files or the user does not cancel the operation Vim exits and
+no result is sent back. The IDE can consider closing the connection as
+a successful result. If the user cancels the operation the number of modified
+buffers that remains is returned and Vim does not exit.
+
+New in protocol version 2.1.
+-}
 saveAndExit :: MonadIO m => Netbeans m ()
 saveAndExit = do
     seqNo <- popCommandNumber
