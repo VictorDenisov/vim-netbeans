@@ -10,5 +10,13 @@ DESCRIPTION
 This is an implementation of the vim netbeans protocol
 <http://vimdoc.sourceforge.net/htmldoc/netbeans.html>.
 
+LIMITATIONS
+-----------
+
 setModTime is not implemented yet due to lack of information about time format
 in vim-netbeans protocol.
+
+Functions which are marked as not implemented in vim-netbeans documentation are
+not implemented.
+
+Function invocation hangs if connection with Vim was lost.
