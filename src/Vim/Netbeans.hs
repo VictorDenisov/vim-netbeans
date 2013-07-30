@@ -56,7 +56,7 @@ where
 import GHC.IO.Handle (Handle, hClose, hSetBinaryMode, hPutStr, hFlush)
 import Control.Monad.Trans (liftIO, lift, MonadTrans)
 import Control.Monad (liftM, forever, forM_)
-import Control.Monad.State (StateT(..), MonadState(..), evalStateT)
+import Control.Monad.Reader (ReaderT(..), MonadReader(..))
 import Network (listenOn, accept, PortID)
 import System.IO (hGetContents, hPutStrLn, stderr)
 import Control.Monad.Error (ErrorT, runErrorT, MonadError(..), Error(..))
@@ -75,7 +75,7 @@ import Control.Concurrent (forkIO)
 
 import qualified Vim.Netbeans.Protocol as P
 
-type Netbeans = StateT ConnState
+type Netbeans = ReaderT ConnState
 
 data ConnState = ConnState
     { sequenceCounter :: MVar Int
@@ -83,7 +83,7 @@ data ConnState = ConnState
     , bufNumber       :: MVar Int
     , annoTypeNumber  :: MVar Int
     , annoNumber      :: MVar Int
-    , protVersion     :: Maybe String
+    , protVersion     :: String
     , messageQueue    :: TChan P.VimMessage
     , parserMap       :: MVar P.ParserMap
     }
@@ -105,24 +105,27 @@ runNetbeans port password vm = do
     annoTypeMVar <- liftIO $ newMVar 1
     annoMVar <- liftIO $ newMVar 1
     liftIO $ forkIO $ messageReader pm handleC q
-    runStateT (preflight >> vm) (ConnState
-                                    seqCounter
-                                    hMVar
-                                    bufMVar
-                                    annoTypeMVar
-                                    annoMVar
-                                    Nothing
-                                    q
-                                    pm)
+
+-- preflight
+    message <- liftIO $ atomically $ readTChan q
+    version <- liftIO $ pollVersion q
+    P.EventMessage _ _ P.StartupDone <- liftIO $ atomically $ readTChan q
+-- end preflight
+    runReaderT vm (ConnState
+                        seqCounter
+                        hMVar
+                        bufMVar
+                        annoTypeMVar
+                        annoMVar
+                        version
+                        q
+                        pm)
     return ()
 
-preflight :: MonadIO m => Netbeans m ()
-preflight = do
-    message <- nextEvent -- first message is AUTH message
-    (_, P.Version v) <- nextEvent -- second message is version message
-    (_, P.StartupDone) <- nextEvent -- third message is startup done
-    st <- get
-    put $ st { protVersion = Just v }
+pollVersion :: TChan P.VimMessage -> IO String
+pollVersion q = do
+    P.EventMessage _ _ (P.Version version) <- liftIO $ atomically $ readTChan q
+    return version
 
 messageReader :: MVar P.ParserMap -> Handle -> TChan P.VimMessage -> IO ()
 messageReader pm h q = do
@@ -147,7 +150,7 @@ messageReader pm h q = do
 at the moment. -}
 nextEvent :: MonadIO m => Netbeans m (P.BufId, P.Event)
 nextEvent = do
-    q <- messageQueue `liftM` get
+    q <- messageQueue `liftM` ask
     message <- liftIO $ atomically $ readTChan q
     case message of
         P.EventMessage bufId seqNo event -> return (bufId, event)
@@ -157,7 +160,7 @@ nextEvent = do
 available. -}
 tryNextEvent :: MonadIO m => Netbeans m (Maybe (P.BufId, P.Event))
 tryNextEvent = do
-    q <- messageQueue `liftM` get
+    q <- messageQueue `liftM` ask
     message <- liftIO $ atomically $ tryReadTChan q
     case message of
         Just (P.EventMessage bufId seqNo event) -> return $ Just (bufId, event)
@@ -175,7 +178,7 @@ takeReply q seqNo = do
 
 popCommandNumber :: MonadIO m => Netbeans m Int
 popCommandNumber = do
-    st <- get
+    st <- ask
     let seqNoMVar = sequenceCounter st
     seqNo <- liftIO $ takeMVar seqNoMVar
     liftIO $ putMVar seqNoMVar (seqNo + 1)
@@ -183,7 +186,7 @@ popCommandNumber = do
 
 popBufferId :: MonadIO m => Netbeans m P.BufId
 popBufferId = do
-    st <- get
+    st <- ask
     let bufNumberMVar = bufNumber st
     bufNo <- liftIO $ takeMVar bufNumberMVar
     liftIO $ putMVar bufNumberMVar (bufNo + 1)
@@ -191,7 +194,7 @@ popBufferId = do
 
 popAnnoTypeNum :: MonadIO m => Netbeans m P.AnnoTypeNum
 popAnnoTypeNum = do
-    st <- get
+    st <- ask
     let annoMVar = annoTypeNumber st
     annoNo <- liftIO $ takeMVar annoMVar
     liftIO $ putMVar annoMVar (annoNo + 1)
@@ -199,7 +202,7 @@ popAnnoTypeNum = do
 
 popAnnoNum :: MonadIO m => Netbeans m P.AnnoNum
 popAnnoNum = do
-    st <- get
+    st <- ask
     let annoMVar = annoNumber st
     annoNo <- liftIO $ takeMVar annoMVar
     liftIO $ putMVar annoMVar (annoNo + 1)
@@ -208,7 +211,7 @@ popAnnoNum = do
 sendCommand :: MonadIO m => P.BufId -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
     seqNo <- popCommandNumber
-    hMVar <- connHandle `liftM` get
+    hMVar <- connHandle `liftM` ask
     let message = P.printMessage $ P.CommandMessage bufId seqNo cmdMsg
     liftIO $ withMVar hMVar $ \h -> do
         hPutStrLn h message
@@ -221,11 +224,11 @@ sendFunction :: MonadIO m => P.BufId
 sendFunction bufId funcMsg parser = do
     seqNo <- popCommandNumber
 
-    hMVar <- connHandle `liftM` get
-    q <- messageQueue `liftM` get
+    hMVar <- connHandle `liftM` ask
+    q <- messageQueue `liftM` ask
     mq <- liftIO $ atomically $ dupTChan q
 
-    pm <- parserMap `liftM` get
+    pm <- parserMap `liftM` ask
     m <- liftIO $ takeMVar pm
 
     liftIO $ putMVar pm ((seqNo, parser) : m)
@@ -663,8 +666,8 @@ saveAndExit :: MonadIO m => Netbeans m ()
 saveAndExit = do
     seqNo <- popCommandNumber
 
-    hMVar <- connHandle `liftM` get
-    q <- messageQueue `liftM` get
+    hMVar <- connHandle `liftM` ask
+    q <- messageQueue `liftM` ask
     mq <- liftIO $ atomically $ dupTChan q
 
     let message = P.printMessage $ P.FunctionMessage (P.BufId 0) seqNo P.SaveAndExit

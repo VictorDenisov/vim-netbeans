@@ -31,9 +31,9 @@ main = runNetbeans (PortNumber 4444) "password" $ do
 
 pollAllEvents :: MonadIO m => Netbeans m ()
 pollAllEvents = do
-    ne <- tryNextEvent
+    ne <- nextEvent
     case ne of
-        Nothing -> return ()
-        Just e -> do
-            liftIO $ putStrLn $ show e
+        (_, Disconnect) -> return ()
+        (_, e) -> do
+            liftIO $ putStrLn $ "printing event" ++ (show e)
             pollAllEvents
