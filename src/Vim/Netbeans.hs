@@ -124,7 +124,7 @@ runNetbeans port password vm = do
 
 pollVersion :: TChan P.VimMessage -> IO String
 pollVersion q = do
-    P.EventMessage _ _ (P.Version version) <- liftIO $ atomically $ readTChan q
+    P.EventMessage _ _ (P.Version version) <- atomically $ readTChan q
     return version
 
 messageReader :: MVar P.ParserMap -> Handle -> TChan P.VimMessage -> IO ()
