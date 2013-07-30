@@ -176,32 +176,32 @@ takeReply q seqNo = do
                                     then return reply
                                     else takeReply q seqNo
 
-popCommandNumber :: MonadIO m => Netbeans m Int
-popCommandNumber = do
+yieldCommandNumber :: MonadIO m => Netbeans m Int
+yieldCommandNumber = do
     st <- ask
     let seqNoMVar = sequenceCounter st
     seqNo <- liftIO $ takeMVar seqNoMVar
     liftIO $ putMVar seqNoMVar (seqNo + 1)
     return seqNo
 
-popBufferId :: MonadIO m => Netbeans m P.BufId
-popBufferId = do
+yieldBufferId :: MonadIO m => Netbeans m P.BufId
+yieldBufferId = do
     st <- ask
     let bufNumberMVar = bufNumber st
     bufNo <- liftIO $ takeMVar bufNumberMVar
     liftIO $ putMVar bufNumberMVar (bufNo + 1)
     return $ P.BufId bufNo
 
-popAnnoTypeNum :: MonadIO m => Netbeans m P.AnnoTypeNum
-popAnnoTypeNum = do
+yieldAnnoTypeNum :: MonadIO m => Netbeans m P.AnnoTypeNum
+yieldAnnoTypeNum = do
     st <- ask
     let annoMVar = annoTypeNumber st
     annoNo <- liftIO $ takeMVar annoMVar
     liftIO $ putMVar annoMVar (annoNo + 1)
     return $ P.AnnoTypeNum annoNo
 
-popAnnoNum :: MonadIO m => Netbeans m P.AnnoNum
-popAnnoNum = do
+yieldAnnoNum :: MonadIO m => Netbeans m P.AnnoNum
+yieldAnnoNum = do
     st <- ask
     let annoMVar = annoNumber st
     annoNo <- liftIO $ takeMVar annoMVar
@@ -210,7 +210,7 @@ popAnnoNum = do
 
 sendCommand :: MonadIO m => P.BufId -> P.Command -> Netbeans m ()
 sendCommand bufId cmdMsg = do
-    seqNo <- popCommandNumber
+    seqNo <- yieldCommandNumber
     hMVar <- connHandle `liftM` ask
     let message = P.printMessage $ P.CommandMessage bufId seqNo cmdMsg
     liftIO $ withMVar hMVar $ \h -> do
@@ -222,7 +222,7 @@ sendFunction :: MonadIO m => P.BufId
                           -> Parser P.Reply
                           -> Netbeans m P.Reply
 sendFunction bufId funcMsg parser = do
-    seqNo <- popCommandNumber
+    seqNo <- yieldCommandNumber
 
     hMVar <- connHandle `liftM` ask
     q <- messageQueue `liftM` ask
@@ -246,7 +246,7 @@ addAnno :: MonadIO m => P.BufId -- ^ buffer id where to place the annotation
                      -> Int -- ^ offset of the annotation
                      -> Netbeans m P.AnnoNum -- ^ id of the placed annotation
 addAnno bufId typeNum off = do
-    annoId <- popAnnoNum
+    annoId <- yieldAnnoNum
     sendCommand bufId $ P.AddAnno annoId typeNum off 0
     return annoId
 
@@ -290,7 +290,7 @@ defineAnnoType :: MonadIO m => P.BufId -- ^ buffer id
                             -> P.Color -- ^ bg
                             -> Netbeans m P.AnnoTypeNum -- ^ type num
 defineAnnoType bufId typeName toolTip glyphFile fg bg = do
-    annoTypeId <- popAnnoTypeNum
+    annoTypeId <- yieldAnnoTypeNum
     sendCommand bufId $
                     P.DefineAnnoType
                             annoTypeId
@@ -321,7 +321,7 @@ New in version 2.1.
 editFile :: MonadIO m => String -- ^ file path
                       -> Netbeans m P.BufId -- ^ assigned buffer id
 editFile path = do
-    bufId <- popBufferId
+    bufId <- yieldBufferId
     sendCommand bufId $ P.EditFile path
     return bufId
 
@@ -381,7 +381,7 @@ New in version 2.1.
 putBufferNumber :: MonadIO m => String -- ^ pathname
                              -> Netbeans m P.BufId -- ^ buffer id
 putBufferNumber pathname = do
-    bufId <- popBufferId
+    bufId <- yieldBufferId
     sendCommand bufId $ P.PutBufferNumber pathname
     return bufId
 
@@ -435,7 +435,7 @@ See putBufferNumber for a more useful command.
 -}
 setBufferNumber :: MonadIO m => String -> Netbeans m P.BufId
 setBufferNumber pathname = do
-    bufId <- popBufferId
+    bufId <- yieldBufferId
     sendCommand bufId $ P.SetBufferNumber pathname
     return bufId
 
@@ -664,7 +664,7 @@ New in protocol version 2.1.
 -}
 saveAndExit :: MonadIO m => Netbeans m ()
 saveAndExit = do
-    seqNo <- popCommandNumber
+    seqNo <- yieldCommandNumber
 
     hMVar <- connHandle `liftM` ask
     q <- messageQueue `liftM` ask
