@@ -66,7 +66,7 @@ import Data.List (isPrefixOf, find, delete)
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 
-import Control.Applicative ((<$>))
+import Control.Applicative ((<$>), Applicative(..))
 import Control.Concurrent.STM.TChan (TChan, newTChan, readTChan, writeTChan,
                                      dupTChan, isEmptyTChan, tryReadTChan)
 import Control.Monad.STM (atomically)
@@ -75,7 +75,14 @@ import Control.Concurrent (forkIO)
 
 import qualified Vim.Netbeans.Protocol as P
 
-type Netbeans = ReaderT ConnState
+newtype Netbeans m a = Netbeans { unNetbeans :: ReaderT ConnState m a }
+                                deriving ( Monad
+                                         , Functor
+                                         , Applicative
+                                         , MonadIO
+                                         , MonadTrans
+                                         , MonadReader ConnState
+                                         , MonadError e)
 
 data ConnState = ConnState
     { sequenceCounter :: MVar Int
@@ -93,7 +100,7 @@ runNetbeans :: (Error e, MonadIO m, MonadError e m)
     -> String -- ^ Expected password
     -> Netbeans m () -- ^ Monad to run
     -> m () -- ^ Internal monad
-runNetbeans port password vm = do
+runNetbeans port password (Netbeans vm) = do
     s <- liftIO $ listenOn port
     (handleC, hostC, portC) <- liftIO $ accept s
     liftIO $ hSetBinaryMode handleC True
