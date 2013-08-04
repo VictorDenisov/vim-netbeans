@@ -11,7 +11,8 @@ tests = [ testGroup "primitiveParsers"
             [ testCase "parseNumber" parseNumber
             , testCase "parseNumberNegative" parseNumberNegative
             , testCase "parseString" parseString
---            , testCase "parseString_withNewLine" parseString_withNewLine
+            , testCase "parseString_withNewLine" parseString_withNewLine
+            , testCase "parseString_withEscapedQuote" parseString_withEscapedQuote
             ]
         , testGroup "parseEvent"
             [ testCase "parseAuth" parseAuth

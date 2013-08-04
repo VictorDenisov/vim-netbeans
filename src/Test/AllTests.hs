@@ -21,6 +21,11 @@ parseString_withNewLine = case parse N.parseString "(unknown)" "\"te\\nxt\"" of
                 Right n -> n @?= "te\nxt"
                 Left _ -> assertFailure "parsing failure"
 
+parseString_withEscapedQuote :: Assertion
+parseString_withEscapedQuote = case parse N.parseString "(unknown)" "\"te\\\"xt\"" of
+                Right n -> n @?= "te\"xt"
+                Left _ -> assertFailure "parsing failure"
+
 parseNumberNegative :: Assertion
 parseNumberNegative = case parse N.parseNumber "(unknown)" "-12" of
                 Right n -> n @?= (-12)

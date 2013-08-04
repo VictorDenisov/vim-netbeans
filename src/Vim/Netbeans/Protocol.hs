@@ -302,10 +302,25 @@ eventParser bufId = char ':' >>
                 <|> try (unmodifiedParser bufId)
                 <|> try (versionParser bufId))
 
+unescapedQuote :: Parser Char
+unescapedQuote = do
+    c <- noneOf "\""
+    if c == '\\'
+        then do
+            nc <- anyChar
+            case nc of
+                'n' -> return '\n'
+                'r' -> return '\r'
+                't' -> return '\t'
+                x -> return x
+        else
+            return c
+
+
 parseString :: Parser String
 parseString = do
     string "\""
-    s <- many1 $ noneOf "\""
+    s <- many1 unescapedQuote
     string "\""
     return s
 
