@@ -52,9 +52,9 @@ parseKeyCommand = (Right $ N.EventMessage (N.BufId 0) 1 $ N.KeyCommand "F1")
                          (N.parseMessage [] "0:keyCommand=1 \"F1\"")
 
 parseKeyAtPos :: Assertion
-parseKeyAtPos = (Right $ N.EventMessage (N.BufId 0) 1 $ N.KeyAtPos "F1" 2 3)
+parseKeyAtPos = (Right $ N.EventMessage (N.BufId 0) 1 $ N.KeyAtPos "F1" 4 2 3)
                 @=?
-                (N.parseMessage [] "0:keyAtPos=1 \"F1\" 2/3")
+                (N.parseMessage [] "0:keyAtPos=1 \"F1\" 4 2/3")
 
 parseKilled :: Assertion
 parseKilled = (Right $ N.EventMessage (N.BufId 0) 1 $ N.Killed)

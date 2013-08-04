@@ -73,6 +73,7 @@ data Event = BalloonText
                 String -- key
            | KeyAtPos
                 String -- key
+                Int -- off
                 Int -- lnum
                 Int -- col
            | Killed
@@ -396,10 +397,12 @@ keyAtPosParser bufId = do
     char ' '
     key <- parseString
     char ' '
+    off <- parseNumber
+    char ' '
     lnum <- parseNumber
     char '/'
     col <- parseNumber
-    return $ EventMessage bufId seqN $ KeyAtPos key lnum col
+    return $ EventMessage bufId seqN $ KeyAtPos key off lnum col
 
 killedParser :: BufId -> Parser VimMessage
 killedParser bufId = do
