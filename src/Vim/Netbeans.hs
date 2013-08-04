@@ -1,6 +1,7 @@
 module Vim.Netbeans
 ( Netbeans
 , runNetbeans
+, NetbeansCallbacks(..)
 , P.Event(..)
 , P.BufId
 , P.Color(..)
@@ -95,13 +96,20 @@ data ConnState = ConnState
     , parserMap       :: MVar P.ParserMap
     }
 
+data NetbeansCallbacks m = NetbeansCallbacks
+                         { preAccept :: m
+                         , initMsgReceived :: P.Event -> m
+                         }
+
 runNetbeans :: (Error e, MonadIO m, MonadError e m)
     => PortID -- ^ Port
     -> String -- ^ Expected password
+    -> NetbeansCallbacks (m ()) -- ^ functions invoked during stages of life cycle
     -> Netbeans m () -- ^ Monad to run
     -> m () -- ^ Internal monad
-runNetbeans port password (Netbeans vm) = do
+runNetbeans port password callbacks (Netbeans vm) = do
     s <- liftIO $ listenOn port
+    preAccept callbacks
     (handleC, hostC, portC) <- liftIO $ accept s
     liftIO $ hSetBinaryMode handleC True
     pm <- liftIO $ newMVar []
@@ -114,9 +122,12 @@ runNetbeans port password (Netbeans vm) = do
     liftIO $ forkIO $ messageReader pm handleC q
 
 -- preflight
-    message <- liftIO $ atomically $ readTChan q
+    P.EventMessage _ _ authEvent@(P.Auth message) <- liftIO $ atomically $ readTChan q
+    initMsgReceived callbacks authEvent
     version <- liftIO $ pollVersion q
+    initMsgReceived callbacks (P.Version version)
     P.EventMessage _ _ P.StartupDone <- liftIO $ atomically $ readTChan q
+    initMsgReceived callbacks P.StartupDone
 -- end preflight
     runReaderT vm (ConnState
                         seqCounter

@@ -4,7 +4,16 @@ import Control.Monad.Trans (liftIO)
 import Network
 import Control.Monad.IO.Class (MonadIO)
 
-main = runNetbeans (PortNumber 4444) "password" $ do
+main = runNetbeans
+            (PortNumber 4444)
+            "password"
+            (NetbeansCallbacks
+                (liftIO $ putStrLn "Waiting for connection")
+                (\e -> case e of
+                    StartupDone -> liftIO $ putStrLn "Startup done"
+                    _ -> liftIO $ putStrLn "other event"
+                )
+            ) $ do
     b <- editFile "ttt"
     l <- getLength b
     a <- defineAnnoType b "myTypeName" "" "=>" Red Blue
